@@ -24,6 +24,7 @@ urlpatterns = [
     path('login/', views.CustomLoginView.as_view(), name='login'),  # Adjust according to your project
     path('signup/', views.signup, name='signup'),
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'), 
+    path('home/', views.home)
 ]
 
 # include the app urls

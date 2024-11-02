@@ -66,3 +66,8 @@ class CustomLoginView(LoginView):
         messages.success(self.request, "You have logged in successfully!")
         # Use the next parameter for redirection
         return super().form_valid(form)
+    
+
+def home(request):
+    form=  DocumentForm()
+    return render(request, 'app/home.html')
