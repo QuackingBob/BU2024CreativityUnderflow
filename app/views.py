@@ -1,4 +1,9 @@
 from django.shortcuts import render
+from langchain_demos.constraint_gen import LaTeXGenerator
+import cv2
+from django.http import HttpResponse
+import subprocess
+import re
 
 # Create your views here.
 
@@ -9,3 +14,25 @@ def document_form(request):
 def document_list(request):
     return render(request, 'app/document_list.html')
 
+def render_image(request):
+    # get image from request
+    image = request.FILES['image']
+    # save image to static folder
+    with open('static/image.png', 'wb') as f:
+        f.write(image.read())
+        
+    
+    generator = LaTeXGenerator()
+    img = cv2.imread('static/image.png')
+    latex = generator.generate(img)
+    latex = re.sub(r'```latex\n', '', latex)
+    latex = re.sub(r'```', '', latex)
+    with open('static/output.tex', 'w') as f:
+        f.write(latex)
+    
+    # output output.pdf to static folder
+    subprocess.run(['pdflatex', '-output-directory=static', 'static/output.tex'])
+    
+
+
+    return HttpResponse(status=200)

@@ -21,4 +21,5 @@ from . import views
 urlpatterns = [
     path("", views.document_form),
     path("list", views.document_list),
+    path("render", views.render_image),
 ]
