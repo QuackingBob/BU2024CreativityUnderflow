@@ -39,7 +39,8 @@ def document_create(request):
 @login_required
 def profile(request):
     # Pass the user's name in the context
-    return render(request, 'documents/document_form.html', {'form': form, 'username': request.user.username})
+    form = DocumentForm()
+    return render(request, 'user/profile.html', {'form': form, 'username': request.user.username})
 
 
 # documents/views.py
@@ -63,4 +64,5 @@ def signup(request):
 class CustomLoginView(LoginView):
     def form_valid(self, form):
         messages.success(self.request, "You have logged in successfully!")
-        return redirect('document_list')
+        # Use the next parameter for redirection
+        return super().form_valid(form)
