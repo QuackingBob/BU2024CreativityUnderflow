@@ -2,3 +2,4 @@ __pycache__
 key.json
 .env
 *.sqlite3
+app/static/test/*

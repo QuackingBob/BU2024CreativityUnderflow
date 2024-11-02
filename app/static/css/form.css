@@ -23,7 +23,7 @@ body {
     width: 100%;
     height: 100%;
     background-color: white;
-    border-radius: 15px;
+    /* border-radius: 15px; */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     position: relative;
@@ -44,6 +44,7 @@ body {
     border-radius: 50%;
 }
 
+/* Container styling */
 .toggle {
     display: flex;
     align-items: center;
@@ -55,8 +56,11 @@ body {
     border-radius: 10px;
     position: relative;
     cursor: pointer;
+    transition: background-color 0.3s;
+    /* Optional background color transition */
 }
 
+/* Circle element inside the toggle */
 .toggle .circle {
     width: 12px;
     height: 12px;
@@ -64,13 +68,24 @@ body {
     border-radius: 50%;
     position: absolute;
     right: 2px;
-    transition: all 0.3s;
+    /* Starting position */
+    transition: all 0.3s ease;
+    /* Smooth transition for all properties */
+}
+
+/* Toggle ON state */
+.toggle.active {
+    background-color: #e0d4f7;
+    /* Optional background color change when active */
 }
 
 .toggle.active .circle {
     left: 2px;
+    /* Move to the left side */
     right: auto;
+    /* Disable the right position */
     background-color: #7b5bbf;
+    /* Change circle color when active */
 }
 
 .canvas {
@@ -116,18 +131,124 @@ canvas {
 
 .render-preview {
     width: 100%;
-    display: none;
+    /* display: flex;
+    flex-direction: column; */
+    height: 100vh;
+}
+
+.split {
+    width: 50%;
+    position: fixed;
+    /* z-index: 1; */
+    /* top: 0; */
+    overflow-x: hidden;
+    /* padding-top: 20px; */
+    height: 100vh;
+}
+
+.full {
+    /* padding-top: 20px; */
+    height: 100vh;
+}
+
+/* Control the left side */
+.left {
+    left: 0;
+}
+
+/* Control the right side */
+.right {
+    right: 0;
+}
+
+/* #main-render, #main-source {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+} */
+
+#main-render {
+    background-color: #f0f0f0;
+}
+
+#main-source {
+    background-color: #e0e0e0;
 }
 
 .button img {
-    width: 24px; /* Set a specific width */
-    height: 24px; /* Set a specific height */
-    max-width: 100%; /* Ensure the image doesn’t grow beyond its container */
+    width: 24px;
+    /* Set a specific width */
+    height: 24px;
+    /* Set a specific height */
+    max-width: 100%;
+    /* Ensure the image doesn’t grow beyond its container */
     max-height: 100%;
-    object-fit: contain; /* Preserve aspect ratio */
+    object-fit: contain;
+    /* Preserve aspect ratio */
     transition: transform 0.2s ease;
 }
 
 .button:hover img {
-    transform: scale(1.3); /* Slightly enlarge on hover */
+    transform: scale(1.3);
+    /* Slightly enlarge on hover */
 }
+
+/* Hidden state - initial values */
+/* .hidden {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease, opacity 0.5s ease;
+} */
+
+/* Visible state - expanded */
+/* .visible {
+    max-height: 500px;
+    opacity: 1;
+    transition: max-height 0.5s ease, opacity 0.5s ease;
+} */
+
+#code-editor {
+    position: relative;
+    /* border-radius: 8px; */
+    overflow: hidden;
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); */
+    width: 100%;
+    height: 100%;
+    background-color: #2d2d2d; /* Dark background */
+}
+
+#editable-code {
+    width: 100%;
+    height: 100%;
+    padding: 1em;
+    font-family: monospace;
+    font-size: 1em;
+    border: none;
+    outline: none;
+    resize: none;
+    background: transparent;
+    color: transparent; /* Hide text */
+    caret-color: #dcdcdc; /* Keep cursor visible */
+    z-index: 1;
+    position: relative;
+    white-space: pre;
+    overflow-wrap: normal;
+    overflow-y: auto;
+}
+
+#highlighted-code {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 1em;
+    pointer-events: none;
+    white-space: pre-wrap;
+    font-family: monospace;
+    color: #dcdcdc; /* Light text color */
+    overflow-wrap: break-word;
+    z-index: 0;
+}
+
