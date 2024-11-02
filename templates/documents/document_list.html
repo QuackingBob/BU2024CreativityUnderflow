@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -109,61 +110,68 @@
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <input type="text" placeholder="Search..." />
-            <a href="#">Notes</a>
-            <a href="#">Rendered</a>
-        </div>
 
-        <!-- Main content area -->
-        <div class="main-content">
-            <h2>Subject</h2>
-            <div class="card-grid">
-                <!-- Cards -->
-                <div class="card">
-                    <div class="badge"></div>
-                    <div class="card-footer">
-                        <p><strong>Name</strong></p>
-                        <p>November 1, 2024</p>
+<body>
+    <form action="{% url 'logout' %}" method="post" style="display:inline;">
+        <div class="container">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <input type="text" placeholder="Search..." />
+                <a href="#">Notes</a>
+                <a href="#">Rendered</a>
+
+                {% csrf_token %}
+                <button type="submit">Logout</button> <!- </div>
+
+                    <!-- Main content area -->
+                    <div class="main-content">
+                        <h2>Subject</h2>
+                        <div class="card-grid">
+                            <!-- Cards -->
+                            <div class="card">
+                                <div class="badge"></div>
+                                <div class="card-footer">
+                                    <p><strong>Name</strong></p>
+                                    <p>November 1, 2024</p>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="badge"></div>
+                                <div class="card-footer">
+                                    <p><strong>Name</strong></p>
+                                    <p>November 1, 2024</p>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="badge"></div>
+                                <div class="card-footer">
+                                    <p><strong>Name</strong></p>
+                                    <p>November 1, 2024</p>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="badge"></div>
+                                <div class="card-footer">
+                                    <p><strong>Name</strong></p>
+                                    <p>November 1, 2024</p>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="badge"></div>
+                                <div class="card-footer">
+                                    <p><strong>Name</strong></p>
+                                    <p>November 1, 2024</p>
+                                </div>
+                            </div>
+                            <!-- Add more cards as needed -->
+                        </div>
                     </div>
-                </div>
-                <div class="card">
-                    <div class="badge"></div>
-                    <div class="card-footer">
-                        <p><strong>Name</strong></p>
-                        <p>November 1, 2024</p>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="badge"></div>
-                    <div class="card-footer">
-                        <p><strong>Name</strong></p>
-                        <p>November 1, 2024</p>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="badge"></div>
-                    <div class="card-footer">
-                        <p><strong>Name</strong></p>
-                        <p>November 1, 2024</p>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="badge"></div>
-                    <div class="card-footer">
-                        <p><strong>Name</strong></p>
-                        <p>November 1, 2024</p>
-                    </div>
-                </div>
-                <!-- Add more cards as needed -->
+
+                    <!-- Floating button -->
+                    <div class="floating-button"></div>
             </div>
         </div>
-
-        <!-- Floating button -->
-        <div class="floating-button"></div>
-    </div>
+    </form>
 </body>
+
 </html>

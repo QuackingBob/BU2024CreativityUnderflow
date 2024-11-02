@@ -7,7 +7,14 @@ from django.contrib.auth.views import LoginView
 
 @login_required
 def document_list(request):
-    documents = Document.objects.filter(owner=request.user)
+    if request.user.is_authenticated:
+        # Get documents that belong to the logged-in user
+        documents = Document.objects.filter(owner=request.user)
+        print(len(documents))
+        print(f'username: {request.user}')
+    else:
+        # Option 1: Redirect unauthenticated users to the login page
+        return redirect('login')
     return render(request, 'documents/document_list.html', {'documents': documents})
 
 @login_required
@@ -28,6 +35,12 @@ def document_create(request):
         form = DocumentForm()
     return render(request, 'documents/document_form.html', {'form': form})
 
+
+@login_required
+def profile(request):
+    # Pass the user's name in the context
+    form = DocumentForm()
+    return render(request, 'user/profile.html', {'form': form, 'username': request.user.username})
 
 
 # documents/views.py
@@ -51,4 +64,5 @@ def signup(request):
 class CustomLoginView(LoginView):
     def form_valid(self, form):
         messages.success(self.request, "You have logged in successfully!")
+        # Use the next parameter for redirection
         return super().form_valid(form)

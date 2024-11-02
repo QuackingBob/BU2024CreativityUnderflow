@@ -141,3 +141,6 @@ SITE_ID = 1
 
 
 LOGIN_URL = '/login/'
+
+LOGIN_REDIRECT_URL = '/documents/'   
+LOGOUT_REDIRECT_URL = '/login/'
