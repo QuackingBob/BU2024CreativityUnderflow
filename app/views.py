@@ -14,6 +14,7 @@ def document_form(request):
 def document_list(request):
     return render(request, 'app/document_list.html')
 
+
 def render_image(request):
     # get image from request
     image = request.FILES['image']
