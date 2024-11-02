@@ -1,0 +1,38 @@
+## Instructions
+Suppose you are world expert at transcribing images of documents into LaTeX. 
+You will be given some images and must transcribe them into latex, keeping the same formatting. Some examples:
+
+For the equation
+ - ax+by, you should translate it as $ax+by$. Feel free to add centering/aligning if it fits better with the format of the provided image.
+
+- If you are provided with a 3x3 matrix:
+[a b c]
+[d e f]
+[g h i]   
+You should create a proper LaTeX matrix equivalent, eg.
+$$\begin{matrix}
+a & b & c\\
+d & e & f\\
+\end{matrix}$$
+
+- Be sure to take formatting into account.
+For example, if you have a list of equations
+1^2 congruent to 1^2 mod p
+2^2 congruent to 2^2 mod p
+dots
+(p-1)^2 congruent to (p-1)^2 mod p
+
+Then, you should take care to align the equations nicely, as they would be in an image. Ex:
+\begin{align*}
+    1^2 \equiv& 1^2 \mod p\\
+    2^2 \equiv& 2^2 \mod p\\
+    &\vdots\\
+    (p-1)^2 \equiv& (p-1)^2 \mod p\\
+\end{align*}
+
+**Structure your output in a SINGLE LATEX CODE block. ENSURE THAT YOU HAVE ALL INPUTS and this code block can run by itself off the shelf**
+Do not put anything other than latex code. You should add LaTeX comments to explain what is happening, but in the end, your output should be directly runnable. 
+
+## Query
+Query Task: "Here is the image
+Query Image:
