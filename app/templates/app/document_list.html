@@ -4,8 +4,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document List</title>
-    {% load static %}
+    <title>Replicated Layout</title>
+    <style>
+        /* General reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Container for full-page layout */
+        .container {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            background-color: #e0e0e0;
+            width: 25%;
+            max-width: 300px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+        }
+
+        .sidebar input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 10px;
+            background-color: #f5f5f5;
+        }
+
+        .sidebar a {
+            margin: 10px 0;
+            font-size: 18px;
+            color: black;
+            text-decoration: none;
+        }
+
+        /* Main content area */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .main-content h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        /* Card grid layout */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        /* Card styling */
+        .card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 200px;
+        }
+
+        .card .badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            border-radius: 5px;
+            background-color: #BAA2F3;
+        }
+
+        .card .card-footer {
+            border-top: 1px solid #e0e0e0;
+            padding-top: 10px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        /* Floating button */
+        .floating-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 20px;
+            background-color: #8554F9;
+            border-radius: 5px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+    </style>
 </head>
 
 <body>
@@ -18,30 +121,56 @@
                 <a href="#">Rendered</a>
 
                 {% csrf_token %}
-                <button type="submit">Logout</button>
-            </div>
+                <button type="submit">Logout</button> 
+             </div>
 
-            <!-- Main content area -->
-            <div class="main-content">
-                <h2>Subject</h2>
-                <div class="card-grid">
-                    <!-- Cards -->
-                    {% for note in documents %}
-                    <div class="card">
-                        <div class="badge"></div>
-                        <div class="card-footer">
-                            <p><strong>note.title</strong></p>
-                            <p>note.updated_at</p>
+                    <!-- Main content area -->
+                    <div class="main-content">
+                        <h2>Subject</h2>
+                        <div class="card-grid">
+                            <!-- Cards -->
+                            <div class="card">
+                                <div class="badge"></div>
+                                <div class="card-footer">
+                                    <p><strong>Name</strong></p>
+                                    <p>November 1, 2024</p>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="badge"></div>
+                                <div class="card-footer">
+                                    <p><strong>Name</strong></p>
+                                    <p>November 1, 2024</p>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="badge"></div>
+                                <div class="card-footer">
+                                    <p><strong>Name</strong></p>
+                                    <p>November 1, 2024</p>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="badge"></div>
+                                <div class="card-footer">
+                                    <p><strong>Name</strong></p>
+                                    <p>November 1, 2024</p>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="badge"></div>
+                                <div class="card-footer">
+                                    <p><strong>Name</strong></p>
+                                    <p>November 1, 2024</p>
+                                </div>
+                            </div>
+                            <!-- Add more cards as needed -->
                         </div>
                     </div>
-                    {% endfor %}
-                    <!-- Add more cards as needed -->
-                </div>
-            </div>
 
-            <!-- Floating button -->
-            <div class="floating-button"></div>
-        </div>
+                    <!-- Floating button -->
+                    <div class="floating-button"></div>
+            </div>
         </div>
     </form>
 </body>
