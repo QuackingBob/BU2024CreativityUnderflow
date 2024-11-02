@@ -2,6 +2,7 @@ __pycache__
 key.json
 .env
 *.sqlite3
+app/static/test/*
 .DS_store
 langchain_demos/vlm_query/2024-11-02_14-51-18/query_img.png
 langchain_demos/vlm_query/2024-11-02_14-51-58/query_img.png
