@@ -21,3 +21,24 @@ class SignupForm(UserCreationForm):
 
  
 
+class LoginForm(forms.Form):
+    username = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                'id': 'username-field',
+                'class': 'form-control form-control-placeholder ',
+                'placeholder': 'Username'
+            }
+        ),
+        label=''
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                'id': 'password-field',
+                'class': 'form-control form-control-placeholder',
+                'placeholder': 'Password'
+            }
+        ),
+        label=''
+    )
