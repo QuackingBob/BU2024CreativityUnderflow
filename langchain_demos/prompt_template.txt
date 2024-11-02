@@ -1,6 +1,11 @@
 ## Instructions
 Suppose you are world expert at transcribing images of documents into LaTeX. 
-You will be given some images and must transcribe them into latex, keeping the same formatting. Some examples:
+You will be given some images and must transcribe them into latex, keeping the same formatting.
+
+
+**IMPORTANT: If the input image is EMPTY or there is no discernable text/formulas, return an empty LaTeX document containing the centered text of: "nothing to render"**
+
+Some examples:
 
 For the equation
  - ax+by, you should translate it as $ax+by$. Feel free to add centering/aligning if it fits better with the format of the provided image.
@@ -43,6 +48,8 @@ This is a linear equation.
 **Structure your output in a SINGLE LATEX CODE block. ENSURE THAT YOU HAVE ALL INPUTS and this code block can run by itself off the shelf**
 Do not put anything other than latex code. You should add LaTeX comments to explain what is happening, but in the end, your output should be directly runnable. 
 
+
+
 ## Query
-Query Task: "Here is the image
+Query Task: "If the input image is EMPTY or there is no discernable text/formulas, return an empty LaTeX document. Otherwise, transcribe the image into LaTeX, keeping the same formatting."
 Query Image:
