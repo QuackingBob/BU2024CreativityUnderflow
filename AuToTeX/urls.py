@@ -20,13 +20,10 @@ from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
- #   path('documents/', include('documents.urls')),
- #   path('accounts/', include('django.contrib.auth.urls')),  # Django's built-in auth URLs
- #   path('signup/', views.signup, name='signup'),
     path('documents/', views.document_list, name='document_list'),  # Ensure this line exists
     path('login/', views.CustomLoginView.as_view(), name='login'),  # Adjust according to your project
     path('signup/', views.signup, name='signup'),
-     path('logout/', LogoutView.as_view(next_page='login'), name='logout'), 
+    path('logout/', LogoutView.as_view(next_page='login'), name='logout'), 
 ]
 
 # include the app urls
