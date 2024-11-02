@@ -94,4 +94,6 @@ class LaTeXGenerator:
         with open(os.path.join(self.task_dir, 'output_raw.tex'), 'w') as f:
             f.write(output)
         print(output)
+        
+        return output
          
