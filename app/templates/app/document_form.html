@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -119,118 +120,128 @@
         .button.active {
             background-color: #7b5bbf;
         }
+
+        .render-preview {
+            width: 100%;
+            display: none;
+        }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <div class="top-bar">
-        <div class="icon"></div>
-        <div class="toolbar">
-            <button class="button" id="penButton">Pen</button>
-            <button class="button" id="eraserButton">Eraser</button>
-            <button class="button" id="undoButton">Undo</button>
-            <button class="button" id="redoButton">Redo</button>
+    <div class="container">
+        <div class="top-bar">
+            <div class="icon"></div>
+            <div class="toolbar">
+                <button class="button" id="penButton">Pen</button>
+                <button class="button" id="eraserButton">Eraser</button>
+                <button class="button" id="undoButton">Undo</button>
+                <button class="button" id="redoButton">Redo</button>
+                <button class="button" id="downloadButton">Download</button>
+            </div>
+            <div class="toggle" onclick="toggleSwitch(this)">
+                <div class="circle"></div>
+            </div>
         </div>
-        <div class="toggle" onclick="toggleSwitch(this)">
-            <div class="circle"></div>
+        <div class="render-preview" id="hidden-preview">
+
+        </div>
+        <div class="canvas" id="view-canvas">
+            <canvas id="drawCanvas"></canvas>
         </div>
     </div>
-    <div class="canvas">
-        <canvas id="drawCanvas"></canvas>
-    </div>
-</div>
 
-<script>
-    const canvas = document.getElementById('drawCanvas');
-    const ctx = canvas.getContext('2d');
-    const max_hist = 10;
+    <script>
+        const canvas = document.getElementById('drawCanvas');
+        const ctx = canvas.getContext('2d');
+        const max_hist = 10;
 
-    function resizeCanvas() {
-        const rect = canvas.parentElement.getBoundingClientRect();
-        canvas.width = rect.width;
-        canvas.height = rect.height;
-    }
+        function resizeCanvas() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+        }
 
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
 
-    let isDrawing = false;
-    let lastX = 0;
-    let lastY = 0;
-    let drawingColor = '#c2a7ef';
-    let lineWidth = 2;
-    let history = [];
-    let historyIndex = -1;
-    let isEraser = false;
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+        let drawingColor = '#c2a7ef';
+        let lineWidth = 2;
+        let history = [];
+        let historyIndex = -1;
+        let isEraser = false;
 
-    function getCoordinates(e) {
-        const rect = canvas.getBoundingClientRect();
-        if (e.type.includes('touch')) {
+        function getCoordinates(e) {
+            const rect = canvas.getBoundingClientRect();
+            if (e.type.includes('touch')) {
+                return {
+                    x: e.touches[0].clientX - rect.left,
+                    y: e.touches[0].clientY - rect.top
+                };
+            }
             return {
-                x: e.touches[0].clientX - rect.left,
-                y: e.touches[0].clientY - rect.top
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
             };
         }
-        return {
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top
-        };
-    }
 
-    function startDrawing(e) {
-        e.preventDefault();
-        isDrawing = true;
-        const coords = getCoordinates(e);
-        [lastX, lastY] = [coords.x, coords.y];
-    }
-
-    function draw(e) {
-        e.preventDefault();
-        if (!isDrawing) return;
-        
-        const coords = getCoordinates(e);
-
-        if (isEraser) {
-            // Clear pixels instead of drawing color
-            ctx.clearRect(coords.x - lineWidth / 2, coords.y - lineWidth / 2, lineWidth, lineWidth);
-        } else {
-            ctx.strokeStyle = drawingColor;
-            ctx.lineWidth = lineWidth;
-            ctx.lineJoin = 'round';
-            ctx.lineCap = 'round';
-
-            ctx.beginPath();
-            ctx.moveTo(lastX, lastY);
-            ctx.lineTo(coords.x, coords.y);
-            ctx.stroke();
+        function startDrawing(e) {
+            e.preventDefault();
+            isDrawing = true;
+            const coords = getCoordinates(e);
+            [lastX, lastY] = [coords.x, coords.y];
         }
 
-        [lastX, lastY] = [coords.x, coords.y];
-    }
+        function draw(e) {
+            e.preventDefault();
+            if (!isDrawing) return;
 
-    function stopDrawing(e) {
-        if (e) e.preventDefault();
-        if (isDrawing) {
-            isDrawing = false;
-            saveState();
-        }
-    }
+            const coords = getCoordinates(e);
 
-    function saveState() {
-        if (historyIndex >= max_hist - 1) {
-            history.shift();
-        }
-        history.push(canvas.toDataURL());
-        historyIndex = history.length - 1;
-    }
+            if (isEraser) {
+                // Clear pixels instead of drawing color
+                ctx.clearRect(coords.x - lineWidth / 2, coords.y - lineWidth / 2, lineWidth, lineWidth);
+            } else {
+                ctx.strokeStyle = drawingColor;
+                ctx.lineWidth = lineWidth;
+                ctx.lineJoin = 'round';
+                ctx.lineCap = 'round';
 
-    function undo() {
-        if (historyIndex > 0) {
-            historyIndex--;
-            restoreState(history[historyIndex]);
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(coords.x, coords.y);
+                ctx.stroke();
+            }
+
+            [lastX, lastY] = [coords.x, coords.y];
         }
-    }
+
+        function stopDrawing(e) {
+            if (e) e.preventDefault();
+            if (isDrawing) {
+                isDrawing = false;
+                saveState();
+            }
+        }
+
+        function saveState() {
+            if (historyIndex >= max_hist - 1) {
+                history.shift();
+            }
+            history.push(canvas.toDataURL());
+            historyIndex = history.length - 1;
+        }
+
+        function undo() {
+            if (historyIndex > 0) {
+                historyIndex--;
+                restoreState(history[historyIndex]);
+            }
+        }
 
     function redo() {
         if (historyIndex < history.length - 1) {
@@ -300,68 +311,87 @@
     }
 
 
-    function restoreState(dataURL) {
-        const img = new Image();
-        img.src = dataURL;
-        img.onload = function () {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(img, 0, 0);
-        };
-    }
-
-    document.getElementById('penButton').addEventListener('click', function () {
-        drawingColor = '#c2a7ef';
-        lineWidth = 2;
-        isEraser = false;
-        toggleActive(this);
-    });
-
-    document.getElementById('eraserButton').addEventListener('click', function () {
-        isEraser = true;
-        lineWidth = 30;
-        toggleActive(this);
-    });
-
-    document.getElementById('undoButton').addEventListener('click', undo);
-    document.getElementById('redoButton').addEventListener('click', redo);
-
-    function toggleActive(button) {
-        document.querySelectorAll('.button').forEach(btn => btn.classList.remove('active'));
-        button.classList.add('active');
-    }
-
-    // Mouse events
-    canvas.addEventListener('mousedown', startDrawing);
-    canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('mouseup', stopDrawing);
-    canvas.addEventListener('mouseout', stopDrawing);
-
-    // Touch events
-    canvas.addEventListener('touchstart', startDrawing, { passive: false });
-    canvas.addEventListener('touchmove', draw, { passive: false });
-    canvas.addEventListener('touchend', stopDrawing, { passive: false });
-    canvas.addEventListener('touchcancel', stopDrawing, { passive: false });
-
-    function toggleSwitch(element) {
-        element.classList.toggle('active');
-    }
-
-    // Prevent scrolling on the entire page while touching the canvas
-    document.body.addEventListener('touchstart', function(e) {
-        if (e.target === canvas) {
-            e.preventDefault();
+        function restoreState(dataURL) {
+            const img = new Image();
+            img.src = dataURL;
+            img.onload = function () {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+            };
         }
-    }, { passive: false });
 
-    document.body.addEventListener('touchmove', function(e) {
-        if (e.target === canvas) {
-            e.preventDefault();
+        document.getElementById('penButton').addEventListener('click', function () {
+            drawingColor = '#c2a7ef';
+            lineWidth = 2;
+            isEraser = false;
+            toggleActive(this);
+        });
+
+        document.getElementById('eraserButton').addEventListener('click', function () {
+            isEraser = true;
+            lineWidth = 30;
+            toggleActive(this);
+        });
+
+        document.getElementById('undoButton').addEventListener('click', undo);
+        document.getElementById('redoButton').addEventListener('click', redo);
+        document.getElementById('downloadButton').addEventListener('click', saveCanvasAsPNG)
+
+        function toggleActive(button) {
+            document.querySelectorAll('.button').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
         }
-    }, { passive: false });
 
-    // Save initial state
-    saveState();
-</script>
+        // Mouse events
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        // Touch events
+        canvas.addEventListener('touchstart', startDrawing, { passive: false });
+        canvas.addEventListener('touchmove', draw, { passive: false });
+        canvas.addEventListener('touchend', stopDrawing, { passive: false });
+        canvas.addEventListener('touchcancel', stopDrawing, { passive: false });
+
+        function toggleSwitch(element) {
+            element.classList.toggle('active');
+
+            elem = document.getElementById("hidden-preview")
+            canv = document.getElementById("view-canvas")
+
+            if (canv.style.display == "none") {
+                canv.style.display = "block";
+            } else {
+                canv.style.display = "none";
+            }
+
+            if (elem.style.display == "none") {
+                elem.style.display = "block";
+            } else {
+                elem.style.display = "none";
+            }
+
+            // print("Toggle View")
+        }
+
+        // Prevent scrolling on the entire page while touching the canvas
+        document.body.addEventListener('touchstart', function (e) {
+            if (e.target === canvas) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        document.body.addEventListener('touchmove', function (e) {
+            if (e.target === canvas) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // Save initial state
+        saveState();
+    </script>
 
 </body>
+
 </html>
