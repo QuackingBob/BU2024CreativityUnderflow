@@ -59,6 +59,7 @@
             width: 30px;
             height: 20px;
             border: 2px solid #c2a7ef;
+            background-color: #ffffff;
             border-radius: 10px;
             position: relative;
             cursor: pointer;
@@ -105,8 +106,8 @@
 
         .button {
             padding: 8px 15px;
-            background-color: #c2a7ef;
-            color: white;
+            background-color: #ffffff00;
+            /* color: white; */
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -114,18 +115,33 @@
         }
 
         .button:hover {
-            background-color: #7b5bbf;
+            background-color: #c2a7ef;
         }
 
         .button.active {
-            background-color: #7b5bbf;
+            background-color: #c2a7ef;
         }
 
         .render-preview {
             width: 100%;
             display: none;
         }
+
+        .button img {
+            width: 24px; /* Set a specific width */
+            height: 24px; /* Set a specific height */
+            max-width: 100%; /* Ensure the image doesn’t grow beyond its container */
+            max-height: 100%;
+            object-fit: contain; /* Preserve aspect ratio */
+            transition: transform 0.2s ease;
+        }
+
+        .button:hover img {
+            transform: scale(1.3); /* Slightly enlarge on hover */
+        }
     </style>
+
+    {% load static %}
 </head>
 
 <body>
@@ -134,13 +150,21 @@
         <div class="top-bar">
             <div class="icon"></div>
             <div class="toolbar">
-                <button class="button" id="penButton">Pen</button>
-                <button class="button" id="eraserButton">Eraser</button>
-                <button class="button" id="undoButton">Undo</button>
-                <button class="button" id="redoButton">Redo</button>
+                <button class="button" id="penButton">
+                    <img src="{% static 'icons\pen-line-svgrepo-com.svg' %}" style="height: 1;">
+                </button>
+                <button class="button" id="eraserButton">
+                    <img src="{% static 'icons\eraser-svgrepo-com.svg' %}" style="height: 1;">
+                </button>
+                <button class="button" id="undoButton">
+                    <img src="{% static 'icons\undo-left-round-svgrepo-com.svg' %}" style="height: 1;">
+                </button>
+                <button class="button" id="redoButton">
+                    <img src="{% static 'icons\undo-right-round-svgrepo-com.svg' %}" style="height: 1;">
+                </button>
                 <button class="button" id="downloadButton">Download</button>
             </div>
-            <div class="toggle" onclick="toggleSwitch(this)">
+            <div class="toggle" onclick="toggleSwitch(this)" id="preview-toggle" style="background-color: #ffffff;">
                 <div class="circle"></div>
             </div>
         </div>
@@ -311,6 +335,12 @@
 
         function toggleSwitch(element) {
             element.classList.toggle('active');
+            toggle_elem = document.getElementById("preview-toggle");
+            if (toggle_elem.style.backgroundColor === "rgb(255, 255, 255)") {
+                toggle_elem.style.backgroundColor = "#c2a7ef";
+            } else {
+                toggle_elem.style.backgroundColor = "#ffffff";
+            }
 
             elem = document.getElementById("hidden-preview")
             canv = document.getElementById("view-canvas")
