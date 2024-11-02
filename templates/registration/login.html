@@ -2,7 +2,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <title>Login 05</title>
+    <title>Login</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -21,43 +21,98 @@
         <div class="row justify-content-center">
           <div class="col-md-7 col-lg-5">
             <div class="wrap">
-             
               <div class="login-wrap p-4 p-md-5">
                 <div class="d-flex">
                   <div class="w-100">
                     <h3 class="mb-4">Sign In</h3>
                   </div>
-                </div>
-              <form method="post">
-                  {% csrf_token %}
-
-				  <div class="form-group form-control">
-					
-					{{ form.username }}
-					   <label class="form-control-placeholder" for="password">Username</label>
-					<!--   <span toggle="#username-field" class="fa fa-fw fa-eye field-icon toggle-username"></span>-->
-					 </div>
-
-                  <div class="form-group form-control">
-					
-				<!-- {{ form.as_p }}
-					<label class="form-control-placeholder" for="password">Password</label>
-                    
+                  <div class="w-100">
+                    <p class="social-media d-flex justify-content-end">
+                      {% comment %} <a href="#" class="social-icon d-flex align-items-center justify-content-center"><span class="fa fa-facebook"></span></a> {% endcomment %}
+                      {% comment %} <a href="#" class="social-icon d-flex align-items-center justify-content-center"><span class="fa fa-twitter"></span></a> {% endcomment %}
+                    </p>
                   </div>
+                </div>
+                
+                <!-- Important: method="post" and action points to the login URL -->
+                <form method="post" action="{% url 'login' %}" class="signin-form">
+                  {% csrf_token %}
+                  
+                  {% if form.errors %}
+                    <div class="alert alert-danger">
+                      <p>Your username and password didn't match. Please try again.</p>
+                    </div>
+                  {% endif %}
+
+                  {% if next %}
+                    {% if user.is_authenticated %}
+                      <div class="alert alert-info">
+                        <p>Your account doesn't have access to this page. To proceed, please login with an account that has access.</p>
+                      </div>
+                    {% else %}
+                      <div class="alert alert-info">
+                        <p>Please login to see this page.</p>
+                      </div>
+                    {% endif %}
+                  {% endif %}
+
+                  <div class="form-group mt-3">
+                    <input 
+                        type="text" 
+                        name="{{ form.username.name }}" 
+                        id="{{ form.username.id_for_label }}" 
+                        class="form-control" 
+                        required 
+                        value="{{ form.username.value|default_if_none:'' }}" 
+                        placeholder=" "
+                    />
+                    <label class="form-control-placeholder" for="{{ form.username.id_for_label }}">Username</label>
+                    {% if form.username.errors %}
+                        <div class="alert alert-danger">
+                            {{ form.username.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+                
+
+                <div class="form-group">
+                  <input 
+                      type="password" 
+                      name="{{ form.password.name }}" 
+                      id="{{ form.password.id_for_label }}" 
+                      class="form-control" 
+                      required 
+                      placeholder=" "
+                  />
+                  <label class="form-control-placeholder" for="{{ form.password.id_for_label }}">Password</label>
+                  <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+                  {% if form.password.errors %}
+                      <div class="alert alert-danger">
+                          {{ form.password.errors }}
+                      </div>
+                  {% endif %}
+              </div>
 
                   <div class="form-group">
                     <button type="submit" class="form-control btn btn-primary rounded submit px-3">Sign In</button>
-                  </div>-->
-				 
-				
-
-					<button type="submit" class="form-control btn btn-primary rounded submit px-3">Login</button>
-				</form>
-				
-				<br>
-				<p class="text-center">Don't have an account? <a href="{% url 'signup' %}">Sign up</a></p>
                   </div>
- 
+
+                  <div class="form-group d-md-flex">
+                    <div class="w-50 text-left">
+                      <label class="checkbox-wrap checkbox-primary mb-0">Remember Me
+                        <input type="checkbox" name="remember">
+                        <span class="checkmark"></span>
+                      </label>
+                    </div>
+                    <div class="w-50 text-md-right">
+                      <a href="">Forgot Password</a>
+                    </div>
+                  </div>
+
+                  <!-- Add hidden next field if provided -->
+                  <input type="hidden" name="next" value="{{ next }}">
+                </form>
+                <p class="text-center">Not a member? <a href="{% url 'signup' %}">Sign Up</a></p>
               </div>
             </div>
           </div>
@@ -69,6 +124,5 @@
     <script src="{% static 'js/popper.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
-
   </body>
 </html>
