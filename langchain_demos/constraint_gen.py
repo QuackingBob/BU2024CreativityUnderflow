@@ -8,19 +8,23 @@ import numpy as np
 import time
 from datetime import datetime
 import json
+import dotenv
+dotenv.load_dotenv()
+
+API_KEY = os.getenv('API_KEY')
 # Function to encode the image
-def encode_image(img):
-    return base64.b64encode(img).decode('utf-8')
+def encode_image(image_array):
+    # Convert numpy array to PNG format
+    success, encoded_image = cv2.imencode('.png', image_array)
+    if not success:
+        raise ValueError("Could not encode image")
+    return base64.b64encode(encoded_image.tobytes()).decode('utf-8')
 
 class LaTeXGenerator:
     def __init__(self, save_dir='./'):
        
         base_dir = os.path.dirname(__file__)
-
-        with open (os.path.join(base_dir, 'key.json'))as f:
-            api_key = json.load(f)['OPENAI_API_KEY']
-        assert api_key == 'test'
-    #    self.client = OpenAI(api_key=api_key)
+        self.client = OpenAI(api_key=API_KEY)
         self.base_dir = os.path.join(save_dir, 'vlm_query')
 
         with open(os.path.join(base_dir, 'prompt_template.txt'), 'r') as f:
@@ -65,8 +69,8 @@ class LaTeXGenerator:
         self.task_dir = os.path.join(self.base_dir, fname)
         os.makedirs(self.task_dir, exist_ok=True)
         # save query image
-        image_path = os.path.join(self.task_dir, 'query_img.png')
-        cv2.imwrite(image_path, img[..., ::-1])
+        # image_path = os.path.join(self.task_dir, 'query_img.png')
+        # cv2.imwrite(image_path, img[..., ::-1])
         # build prompt
         
         messages = self._build_prompt(img)
@@ -89,4 +93,5 @@ class LaTeXGenerator:
         # save raw output
         with open(os.path.join(self.task_dir, 'output_raw.tex'), 'w') as f:
             f.write(output)
+        print(output)
          
