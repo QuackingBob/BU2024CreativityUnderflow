@@ -168,7 +168,7 @@
             </div>
 
             <div class="toolbar" id="hidden-tools" style="display: none;">
-                <div class="button">
+                <div class="button" id="split-view">
                     <img src="{% static 'icons/split-two-svgrepo-com.svg' %}" style="height: 1;">
                 </div>
             </div>
@@ -336,6 +336,19 @@
             button.classList.add('active');
         }
 
+        function toggleViewable(id) {
+            elem = document.getElementById(id);
+            if (elem.style.display == "none") {
+                elem.style.display = "block";
+            } else {
+                elem.style.display = "none";
+            }
+        }
+
+        function toggleSource() {
+            toggleViewable("main-source");
+        }
+
         // Mouse events
         canvas.addEventListener('mousedown', startDrawing);
         canvas.addEventListener('mousemove', draw);
@@ -347,15 +360,6 @@
         canvas.addEventListener('touchmove', draw, { passive: false });
         canvas.addEventListener('touchend', stopDrawing, { passive: false });
         canvas.addEventListener('touchcancel', stopDrawing, { passive: false });
-        
-        function toggleViewable(id) {
-            elem = document.getElementById(id);
-            if (elem.style.display == "none") {
-                elem.style.display = "block";
-            } else {
-                elem.style.display = "none";
-            }
-        }
 
         function toggleSwitch(element) {
             element.classList.toggle('active');
