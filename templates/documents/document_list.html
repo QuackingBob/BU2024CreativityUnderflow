@@ -1,0 +1,9 @@
+<!-- documents/document_list.html -->
+<h1>Your Documents</h1>
+ 
+<ul>
+    <form action="{% url 'logout' %}" method="post" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit">Logout</button>  <!-- Button to log out -->
+    </form>
+</ul>
