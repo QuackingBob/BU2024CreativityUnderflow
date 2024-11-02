@@ -57,8 +57,7 @@ ROOT_URLCONF = 'AuToTeX.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # 'DIRS': [os.path.join(os.path.join(os.path.dirname(__file__)), "../templates")],
-        'DIRS': [os.path.join(BASE_DIR, "app/templates"), "../templates"],
+        'DIRS': [os.path.join(os.path.join(os.path.dirname(__file__)), "../templates"), os.path.join(BASE_DIR, "app/templates")],
 
         'APP_DIRS': True,
         'OPTIONS': {
@@ -128,24 +127,10 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-# In settings.py
-INSTALLED_APPS = [
-    # other apps
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-
-    'documents',  # your custom app
-    
-]
 SITE_ID = 1
 
 
 LOGIN_URL = '/login/'
 
-LOGIN_REDIRECT_URL = '/documents/'   
+LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/login/'
