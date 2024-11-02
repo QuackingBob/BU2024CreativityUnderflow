@@ -36,7 +36,6 @@
             position: relative;
         }
 
-        /* Rest of your existing styles remain the same */
         .top-bar {
             display: grid;
             grid-template-columns: 1fr auto 1fr;
@@ -163,6 +162,7 @@
     let lineWidth = 2;
     let history = [];
     let historyIndex = -1;
+    let isEraser = false;
 
     function getCoordinates(e) {
         const rect = canvas.getBoundingClientRect();
@@ -190,16 +190,22 @@
         if (!isDrawing) return;
         
         const coords = getCoordinates(e);
-        ctx.strokeStyle = drawingColor;
-        ctx.lineWidth = lineWidth;
-        ctx.lineJoin = 'round';
-        ctx.lineCap = 'round';
 
-        ctx.beginPath();
-        ctx.moveTo(lastX, lastY);
-        ctx.lineTo(coords.x, coords.y);
-        ctx.stroke();
-        
+        if (isEraser) {
+            // Clear pixels instead of drawing color
+            ctx.clearRect(coords.x - lineWidth / 2, coords.y - lineWidth / 2, lineWidth, lineWidth);
+        } else {
+            ctx.strokeStyle = drawingColor;
+            ctx.lineWidth = lineWidth;
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(coords.x, coords.y);
+            ctx.stroke();
+        }
+
         [lastX, lastY] = [coords.x, coords.y];
     }
 
@@ -231,7 +237,25 @@
             historyIndex++;
             restoreState(history[historyIndex]);
         }
+        saveCanvasAsPNG();
+
+
     }
+    function saveCanvasAsPNG() {
+        // Convert canvas to data URL
+        const dataURL = canvas.toDataURL('image/png');
+        
+        // Create a temporary link element
+        const link = document.createElement('a');
+        link.download = 'drawing.png'; // Set filename
+        link.href = dataURL;
+        
+        // Programmatically click the link to trigger download
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
 
     function restoreState(dataURL) {
         const img = new Image();
@@ -245,12 +269,13 @@
     document.getElementById('penButton').addEventListener('click', function () {
         drawingColor = '#c2a7ef';
         lineWidth = 2;
+        isEraser = false;
         toggleActive(this);
     });
 
     document.getElementById('eraserButton').addEventListener('click', function () {
-        drawingColor = '#f0f0f0';
-        lineWidth = 10;
+        isEraser = true;
+        lineWidth = 30;
         toggleActive(this);
     });
 
