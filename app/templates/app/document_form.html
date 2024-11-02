@@ -149,7 +149,7 @@
     <div class="container">
         <div class="top-bar">
             <div class="icon"></div>
-            <div class="toolbar">
+            <div class="toolbar" id="main-toolbox">
                 <button class="button" id="penButton">
                     <img src="{% static 'icons\pen-line-svgrepo-com.svg' %}" style="height: 1;">
                 </button>
@@ -162,14 +162,29 @@
                 <button class="button" id="redoButton">
                     <img src="{% static 'icons\undo-right-round-svgrepo-com.svg' %}" style="height: 1;">
                 </button>
-                <button class="button" id="downloadButton">Download</button>
+                <button class="button" id="downloadButton">
+                    <img src="{% static 'icons\upload-minimalistic-svgrepo-com.svg' %}" style="height: 1;">
+                </button>
             </div>
+
+            <div class="toolbar" id="hidden-tools" style="display: none;">
+                <div class="button">
+                    <img src="{% static 'icons/split-two-svgrepo-com.svg' %}" style="height: 1;">
+                </div>
+            </div>
+
             <div class="toggle" onclick="toggleSwitch(this)" id="preview-toggle" style="background-color: #ffffff;">
                 <div class="circle"></div>
             </div>
         </div>
         <div class="render-preview" id="hidden-preview">
+            <div id="main-render">
 
+            </div>
+
+            <div id="main-source" style="display: none;">
+
+            </div>
         </div>
         <div class="canvas" id="view-canvas">
             <canvas id="drawCanvas"></canvas>
@@ -377,6 +392,15 @@
         canvas.addEventListener('touchmove', draw, { passive: false });
         canvas.addEventListener('touchend', stopDrawing, { passive: false });
         canvas.addEventListener('touchcancel', stopDrawing, { passive: false });
+        
+        function toggleViewable(id) {
+            elem = document.getElementById(id);
+            if (elem.style.display == "none") {
+                elem.style.display = "block";
+            } else {
+                elem.style.display = "none";
+            }
+        }
 
         function toggleSwitch(element) {
             element.classList.toggle('active');
@@ -387,20 +411,10 @@
                 toggle_elem.style.backgroundColor = "#ffffff";
             }
 
-            elem = document.getElementById("hidden-preview")
-            canv = document.getElementById("view-canvas")
-
-            if (canv.style.display == "none") {
-                canv.style.display = "block";
-            } else {
-                canv.style.display = "none";
-            }
-
-            if (elem.style.display == "none") {
-                elem.style.display = "block";
-            } else {
-                elem.style.display = "none";
-            }
+            toggleViewable("hidden-preview");
+            toggleViewable("view-canvas");
+            toggleViewable("main-toolbox");
+            toggleViewable("hidden-tools");
 
             // print("Toggle View")
         }
