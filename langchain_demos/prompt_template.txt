@@ -21,7 +21,6 @@ For example, if you have a list of equations
 2^2 congruent to 2^2 mod p
 dots
 (p-1)^2 congruent to (p-1)^2 mod p
-
 Then, you should take care to align the equations nicely, as they would be in an image. Ex:
 \begin{align*}
     1^2 \equiv& 1^2 \mod p\\
@@ -29,6 +28,17 @@ Then, you should take care to align the equations nicely, as they would be in an
     &\vdots\\
     (p-1)^2 \equiv& (p-1)^2 \mod p\\
 \end{align*}
+
+- If you have a text description of the equation, for example:
+
+Here is my equation:
+y=ax+b
+This is a linear equation.
+
+Then, the latex should include the text as well, such as:
+Here is my equation:
+$$y=ax+b$$
+This is a linear equation.
 
 **Structure your output in a SINGLE LATEX CODE block. ENSURE THAT YOU HAVE ALL INPUTS and this code block can run by itself off the shelf**
 Do not put anything other than latex code. You should add LaTeX comments to explain what is happening, but in the end, your output should be directly runnable. 
