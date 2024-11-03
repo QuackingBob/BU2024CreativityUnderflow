@@ -61,3 +61,4 @@ vlm_query/2024-11-02_23-53-32/output_raw.tex
 vlm_query/2024-11-02_23-57-32/output_raw.tex
 vlm_query/2024-11-02_23-58-12/output_raw.tex
 vlm_query/*
+app/migrations/0003_alter_document_id.py
