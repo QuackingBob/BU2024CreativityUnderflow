@@ -14,14 +14,22 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-
+from django.urls import path, include
+from rest_framework import routers
+from .views import DocumentViewSet
 from . import views
 
+router = routers.DefaultRouter()
+router.register(r'documents', DocumentViewSet, basename='document')
+
 urlpatterns = [
-    path("", views.document_form),
-    path("list", views.document_list),
     path("render", views.render_image),
     path('get_latex', views.get_latex, name='get_latex'),
     path('recompile_latex', views.get_latex, name='recompile_latex'),
+    path('api/', include(router.urls)), 
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+
+    path('documents/', views.document_list, name='document_list'),
+    path('/', views.document_list, name='document_list'),
+    path('documents/<int:document_id>/', views.document_detail, name='document_detail'),
 ]
