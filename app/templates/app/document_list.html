@@ -19,9 +19,9 @@
                 <h1><b>Notes</b></h1>
                 <ul class="note-list">
                     {% for note in documents %}
-                    <li>
-                        <a href="{% url 'document_detail' note.id %}">
-                            {{ note.title }}
+                    <li style="margin-top:2px;margin-bottom: 2px; list-style-type: none;">
+                        <a class="notes-bg" style="color:#8a65c9" href="{% url 'document_detail' note.id %}">
+                            <u>{{ note.title }}</u>
                         </a>
                     </li>
                     {% empty %}
