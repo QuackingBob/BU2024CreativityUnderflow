@@ -189,52 +189,91 @@
             </div>
         </div>
 
-        <!-- Main content area -->
-        <div class="main-content">
-            <h2>Welcome, {{ user.username }}!</h2>
-            <div class="card-grid">
-                <!-- Cards -->
-                <div class="card">
-                    <div class="badge"></div>
-                    <div class="card-footer">
-                        <p><strong>Name</strong></p>
-                        <p>November 1, 2024</p>
+            <!-- Main content area -->
+            <div class="main-content">
+                <h2>Subject</h2>
+                <div class="card-grid">
+                    <!-- Cards -->
+                    <div class="card">
+                        <div class="badge"></div>
+                        <div class="card-footer">
+                            <p><strong>Name</strong></p>
+                            <p>November 1, 2024</p>
+                        </div>
                     </div>
-                </div>
-                <div class="card">
-                    <div class="badge"></div>
-                    <div class="card-footer">
-                        <p><strong>Name</strong></p>
-                        <p>November 1, 2024</p>
+                    <div class="card">
+                        <div class="badge"></div>
+                        <div class="card-footer">
+                            <p><strong>Name</strong></p>
+                            <p>November 1, 2024</p>
+                        </div>
                     </div>
-                </div>
-                <div class="card">
-                    <div class="badge"></div>
-                    <div class="card-footer">
-                        <p><strong>Name</strong></p>
-                        <p>November 1, 2024</p>
+                    <div class="card">
+                        <div class="badge"></div>
+                        <div class="card-footer">
+                            <p><strong>Name</strong></p>
+                            <p>November 1, 2024</p>
+                        </div>
                     </div>
-                </div>
-                <div class="card">
-                    <div class="badge"></div>
-                    <div class="card-footer">
-                        <p><strong>Name</strong></p>
-                        <p>November 1, 2024</p>
+                    <div class="card">
+                        <div class="badge"></div>
+                        <div class="card-footer">
+                            <p><strong>Name</strong></p>
+                            <p>November 1, 2024</p>
+                        </div>
                     </div>
-                </div>
-                <div class="card">
-                    <div class="badge"></div>
-                    <div class="card-footer">
-                        <p><strong>Name</strong></p>
-                        <p>November 1, 2024</p>
+                    <div class="card">
+                        <div class="badge"></div>
+                        <div class="card-footer">
+                            <p><strong>Name</strong></p>
+                            <p>November 1, 2024</p>
+                        </div>
                     </div>
+                    {% for note in documents %}
+                    <div class="card">
+                        {% if note.img_content %}
+                        <img src="{{ note.img_content.url }}" alt="Note Image" class="card-img-top">
+                        {% endif %}
+
+                        <div class="badge">{{ note.owner.username }}</div>
+
+                        <div class="card-body">
+                            <h5 class="card-title" onclick="openNotePage('{{ note.id }}')">{{ note.title }}</h5>
+                            <p class="card-text">
+                                {{ note.content|linebreaks }} <!-- Renders LaTeX content if using a renderer -->
+                            </p>
+                        </div>
+
+                        <div class="card-footer">
+                            <p><strong>{{ note.owner.username }}</strong></p>
+                            <p>{{ note.created_at|date:"F j, Y" }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <!-- Add more cards as needed -->
                 </div>
             </div>
-        </div>
 
-        <!-- Floating button -->
-        <div class="floating-button"></div>
-    </div>
+            <!-- Floating button -->
+            <button class="button">
+                <img src="{% static 'icons\new-svgrepo-com.svg' %}" style="height: 1" />
+            </button>
+        </div>
+        </div>
+    </form>
+
+    <script>
+        function openNotePage(noteId) {
+            // Redirect to a specific note's page (URL to be defined in your Django view)
+            window.location.href = `/notes/${noteId}/`;
+        }
+
+        function openNewNotePage() {
+            // Redirect to the "new note" page
+            window.location.href = '/notes/new/';
+        }
+    </script>
 </body>
 
 </html>

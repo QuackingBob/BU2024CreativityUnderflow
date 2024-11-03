@@ -329,19 +329,3 @@ document.body.addEventListener(
 // Save initial state
 saveState();
 
-// Get the textarea and highlighted code elements
-const editableCode = document.getElementById("editable-code");
-const highlightedCode = document.getElementById("highlighted-code");
-
-// Function to update syntax highlighting and render LaTeX
-editableCode.addEventListener("input", () => {
-    // Update the highlighted code content
-    highlightedCode.textContent = editableCode.value;
-
-    // Reapply syntax highlighting with Prism
-    Prism.highlightElement(highlightedCode);
-
-    // // Render LaTeX syntax with MathJax
-    // MathJax.typesetPromise([highlightedCode]);
-});
-

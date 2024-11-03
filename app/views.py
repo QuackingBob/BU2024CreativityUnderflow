@@ -6,6 +6,8 @@ import os
 import subprocess
 import re
 
+from .models import Document
+
 
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Document
@@ -65,3 +67,12 @@ def get_latex(request):
         return HttpResponse(latex_content, content_type='text/plain')
     except FileNotFoundError:
         return HttpResponse(status=404)
+    
+def create_document(request):
+    if request.method == 'POST':
+        title = request.POST['title']
+        content = request.POST['content']
+        img_content = request.FILES['img_content']
+        Document.objects.create(title=title, content=content, img_content=img_content, owner=request.user)
+        return redirect('document_list')
+    return render(request, 'app/document_form.html')

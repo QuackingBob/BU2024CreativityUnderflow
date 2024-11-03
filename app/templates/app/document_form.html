@@ -1,13 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        {% load static %}
+        <title>Website Layout</title>
+        <link
+            rel="stylesheet"
+            href="{% static 'css/form.css' %}" />
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    {% load static %}
-    <title>Website Layout</title>
-    <link rel="stylesheet" href="{% static 'css/form.css' %}" />
-</head>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" />
+    </head>
 
 <body>
     <div class="container">
@@ -34,7 +41,7 @@
                         <img src="{% static 'icons\undo-right-round-svgrepo-com.svg' %}" style="height: 1" />
                     </button>
                     <button class="button" id="downloadButton">
-                        <img src="{% static 'icons\upload-minimalistic-svgrepo-com.svg' %}" style="height: 1" />
+                        <img src="{% static 'icons\download-minimalistic-svgrepo-com.svg' %}" style="height: 1" />
                     </button>
                 </div>
                 <div class="hidden" id="hidden-tools">
@@ -44,34 +51,57 @@
                 </div>
             </div>
 
-            <div class="toggle" onclick="toggleSwitch(this)" id="preview-toggle" style="background-color: #ffffff">
-                <div class="circle"></div>
-            </div>
-        </div>
-        <div class="render-preview" id="hidden-preview" style="display: none;">
-            <div id="main-render" class="full">
-                <object data="{% static 'test/Homework 7.pdf' %}" type="application/pdf" width="100%" height="100%">
-                    <p>Unable to display PDF file. <a href="">Download</a> instead.</p>
-                </object>
-            </div>
-
-            <div id="main-source" style="display: none" class="split left">
-                <div id="code-editor">
-                    <textarea id="editable-code" placeholder="Type your code or LaTeX here..."></textarea>
-                    <pre><code id="highlighted-code" class="language-latex"></code></pre>
+                <div
+                    class="toggle"
+                    onclick="toggleSwitch(this)"
+                    id="preview-toggle"
+                    style="background-color: #ffffff">
+                    <div class="circle"></div>
                 </div>
             </div>
-            
-            <!-- Add MathJax for LaTeX rendering -->
-            <!-- <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>             -->
-        </div>
-        <div class="canvas" id="view-canvas">
-            <canvas id="drawCanvas"></canvas>
-        </div>
-    </div>
+            <div
+                class="render-preview"
+                id="hidden-preview"
+                style="display: none">
+                <div
+                    id="main-render"
+                    class="full">
+                    <object
+                        data="{% static 'test/Homework 7.pdf' %}"
+                        type="application/pdf"
+                        width="100%"
+                        height="100%">
+                        <p>
+                            Unable to display PDF file.
+                            <a href="">Download</a> instead.
+                        </p>
+                    </object>
+                </div>
 
-    <script src="{% static 'js/form.js' %}"></script>
-    <script src="{% static 'js/prism.js' %}"></script>
-</body>
+                <div
+                    id="main-source"
+                    style="display: none"
+                    class="split left">
+                    <div id="code-editor">
+                        <textarea
+                            id="editable-code"
+                            placeholder="Type your code or LaTeX here..."></textarea>
+                        <pre><code id="highlighted-code" class="language-latex"></code></pre>
+                    </div>
+                </div>
 
+                <!-- Add MathJax for LaTeX rendering -->
+                <!-- <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>             -->
+            </div>
+            <div
+                class="canvas"
+                id="view-canvas">
+                <canvas id="drawCanvas"></canvas>
+            </div>
+        </div>
+
+        <script src="{% static 'js/form.js' %}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-latex.min.js"></script>
+    </body>
 </html>
