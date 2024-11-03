@@ -144,14 +144,33 @@ function saveCanvasAsPNG() {
                 },
                 body: formData,
             })
-                .then((response) => {
+                .then(response => {
                     if (!response.ok) {
-                        throw new Error("Network response was not ok");
+                        throw new Error('Network response was not ok');
                     }
-                    console.log("Image rendered successfully");
+                    return response.blob();
                 })
-                .catch((error) => {
-                    console.error("Error:", error);
+                .then(blob => {
+                    // Create object URL from blob
+                    const pdfUrl = URL.createObjectURL(blob);
+                    
+                    // Update the PDF viewer
+                    const pdfViewer = document.querySelector('#main-render object');
+                    pdfViewer.data = pdfUrl;
+                    
+                    // Show the preview if not already visible
+                    document.getElementById('hidden-preview').style.display = 'block';
+                    document.getElementById('view-canvas').style.display = 'none';
+                    document.getElementById('main-toolbox').style.display = 'none';
+                    document.getElementById('hidden-tools').style.display = 'block';
+                    
+                    // Update toggle state
+                    const toggle = document.getElementById('preview-toggle');
+                    toggle.classList.add('active');
+                    toggle.style.backgroundColor = '#c2a7ef';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
                 });
         });
 
