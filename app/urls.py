@@ -15,12 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework import routers
-from .views import DocumentViewSet
+from rest_framework.routers import DefaultRouter
 from . import views
 
-router = routers.DefaultRouter()
-router.register(r'documents', DocumentViewSet, basename='document')
+router = DefaultRouter()
+router.register(r'documents', views.DocumentViewSet)
 
 urlpatterns = [
     path("render", views.render_image),
@@ -29,6 +28,6 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
     path('documents/', views.document_list, name='document_list'),
-    path('/', views.document_list, name='document_list'),
+    path('', views.document_list, name='document_list'),
     path('documents/<int:document_id>/', views.document_detail, name='document_detail'),
 ]

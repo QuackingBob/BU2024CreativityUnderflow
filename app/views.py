@@ -13,13 +13,16 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Document
 from django.contrib.auth.decorators import login_required
 
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status
 from .models import Document
 from .serializers import DocumentSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+import logging
+
+logger = logging.getLogger(__name__)
 
 class DocumentViewSet(viewsets.ModelViewSet):
     """
@@ -28,6 +31,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
     parser_classes = (MultiPartParser, FormParser)
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         """
@@ -55,6 +59,38 @@ class DocumentViewSet(viewsets.ModelViewSet):
             return Response({'success': True, 'document_id': serializer.instance.id})
         else:
             return Response({'success': False, 'errors': serializer.errors}, status=400)
+
+    @action(detail=True, methods=['patch'], url_path='update-state')
+    def update_state(self, request, pk=None):
+        """
+        Custom action to update document state with new canvas image
+        """
+        try:
+            document = self.get_object()
+            logger.debug(f"Updating state for document {pk}")
+            logger.debug(f"Request FILES: {request.FILES}")
+            
+            if 'img_content' in request.FILES:
+                document.img_content = request.FILES['img_content']
+                document.save()
+                logger.debug(f"Successfully updated document {pk}")
+                return Response({
+                    'success': True,
+                    'message': 'State updated successfully'
+                })
+            else:
+                logger.warning(f"No image content provided for document {pk}")
+                return Response({
+                    'success': False,
+                    'error': 'No image content provided'
+                }, status=status.HTTP_400_BAD_REQUEST)
+                
+        except Exception as e:
+            logger.error(f"Error updating document {pk}: {str(e)}")
+            return Response({
+                'success': False,
+                'error': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @login_required
 def document_detail(request, document_id):

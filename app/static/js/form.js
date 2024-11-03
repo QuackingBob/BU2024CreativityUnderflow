@@ -1,5 +1,5 @@
 const canvas = document.getElementById("drawCanvas");
-const ctx = canvas ? canvas.getContext("2d") : null;
+const ctx = canvas.getContext("2d");
 const max_hist = 10;
 
 function resizeCanvas() {
@@ -78,18 +78,71 @@ function stopDrawing(e) {
     }
 }
 
+// Move getCookie function to global scope
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === name + "=") {
+                cookieValue = decodeURIComponent(
+                    cookie.substring(name.length + 1)
+                );
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 function saveState() {
     if (historyIndex >= max_hist - 1) {
         history.shift();
     }
     history.push(canvas.toDataURL());
     historyIndex = history.length - 1;
+
+    // Save to server
+    const documentId = document.querySelector('[data-document-id]').dataset.documentId;
+    if (!documentId) {
+        console.error('No document ID found');
+        return;
+    }
+
+    const formData = new FormData();
+    fetch(canvas.toDataURL())
+        .then(res => res.blob())
+        .then(blob => {
+            formData.append("img_content", blob, "canvas_state.png");
+            
+            return fetch(`/api/documents/${documentId}/update-state/`, {
+                method: 'PATCH',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                body: formData
+            });
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('State saved successfully:', data);
+        })
+        .catch(error => {
+            console.error('Error saving state:', error);
+        });
 }
 
 function undo() {
     if (historyIndex > 0) {
         historyIndex--;
         restoreState(history[historyIndex]);
+        saveState();
     }
 }
 
@@ -97,6 +150,7 @@ function redo() {
     if (historyIndex < history.length - 1) {
         historyIndex++;
         restoreState(history[historyIndex]);
+        saveState();
     }
     // saveCanvasAsPNG();
 }
@@ -110,25 +164,6 @@ function saveCanvasAsPNG() {
     link.download = "drawing.png"; // Set filename
     link.href = dataURL;
 
-    // Get CSRF token from cookie
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== "") {
-            const cookies = document.cookie.split(";");
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === name + "=") {
-                    cookieValue = decodeURIComponent(
-                        cookie.substring(name.length + 1)
-                    );
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-    const csrftoken = getCookie("csrftoken");
-
     // Create form data and append the blob
     const formData = new FormData();
     fetch(dataURL)
@@ -140,7 +175,7 @@ function saveCanvasAsPNG() {
             fetch("/render", {
                 method: "POST",
                 headers: {
-                    "X-CSRFToken": csrftoken,
+                    "X-CSRFToken": getCookie("csrftoken"),
                 },
                 body: formData,
             })
@@ -201,7 +236,9 @@ document.getElementById("eraserButton").addEventListener("click", function () {
     lineWidth = 30;
     toggleActive(this);
 });
-
+document.getElementById("backButton").addEventListener("click", function () {
+    window.location.href = "/documents/";
+});
 document.getElementById("undoButton").addEventListener("click", undo);
 document.getElementById("redoButton").addEventListener("click", redo);
 document
@@ -326,85 +363,32 @@ document.body.addEventListener(
     { passive: false }
 );
 
-// Save initial state
-saveState();
 
-    img_content = models.ImageField(upload_to='documents/images/', blank=True, null=True)
+// Add this function to restore state from server
+async function loadInitialState() {
+    const documentId = document.querySelector('[data-document-id]').dataset.documentId;
+    if (!documentId) return;
 
+    try {
+        const response = await fetch(`/api/documents/${documentId}/`);
+        const document = await response.json();
+        
+        if (document.img_content) {
+            const img = new Image();
+            img.src = document.img_content;
+            img.onload = function() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+                saveState(); // Save initial state to history
+            };
+        } else {
+            saveState(); // Save blank state to history
+        }
+    } catch (error) {
+        console.error('Error loading initial state:', error);
+        saveState(); // Save blank state to history if loading fails
+    }
+}
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const saveButton = document.getElementById('saveButton');
-        const documentForm = document.querySelector('.container');
-    
-        saveButton.addEventListener('click', async function(e) {
-            e.preventDefault();
-    
-            const title = document.getElementById('documentTitle').value;
-            const content = document.getElementById('editable-code').value;
-    
-            const canvas = document.getElementById("drawCanvas");
-            let imgBlob = null;
-    
-            if (canvas) {
-                imgBlob = await new Promise((resolve) => {
-                    canvas.toBlob(resolve, 'image/png');
-                });
-            }
-    
-            const formData = new FormData();
-            formData.append('title', title);
-            formData.append('content', content);
-            if (imgBlob) {
-                formData.append('img_content', imgBlob, 'drawing.png');
-            }
-    
-            {% if document %}
-                const documentId = '{{ document.id }}';
-                var url = `/api/documents/${documentId}/`;
-                var method = 'PUT';
-            {% else %}
-                var url = `/api/documents/`;
-                var method = 'POST';
-            {% endif %}
-    
-            // Get CSRF token
-            function getCookie(name) {
-                let cookieValue = null;
-                if (document.cookie && document.cookie !== "") {
-                    const cookies = document.cookie.split(";");
-                    for (let i = 0; i < cookies.length; i++) {
-                        const cookie = cookies[i].trim();
-                        if (cookie.substring(0, name.length + 1) === (name + "=")) {
-                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                            break;
-                        }
-                    }
-                }
-                return cookieValue;
-            }
-            const csrftoken = getCookie('csrftoken');
-    
-            try {
-                const response = await fetch(url, {
-                    method: method,
-                    headers: {
-                        'X-CSRFToken': csrftoken,
-                    },
-                    body: formData
-                });
-                const data = await response.json();
-                if (response.ok) {
-                    alert('Document saved successfully!');
-                    if (!{{ document|yesno:"true,false" }}) {
-                        window.location.href = `/documents/${data.id}/`;
-                    }
-                } else {
-                    alert('Error saving document');
-                    console.error(data.errors);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error saving document');
-            }
-        });
-    });
+// Call loadInitialState when the page loads
+loadInitialState();
