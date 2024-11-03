@@ -117,6 +117,7 @@ function saveState() {
         .then((blob) => {
             formData.append("img_content", blob, "canvas_state.png");
 
+
             return fetch(`/api/documents/${documentId}/update-state/`, {
                 method: "PATCH",
                 headers: {
@@ -375,6 +376,28 @@ function update(input) {
     document.getElementById("highlighted-code").innerHTML = highlightedCode;
 }
 
+// Sync scrolling between editable and highlighted areas
+function sync_scroll(element) {
+    const highlightedCode = document.getElementById("highlighted-code");
+    highlightedCode.scrollTop = element.scrollTop;
+    highlightedCode.scrollLeft = element.scrollLeft;
+}
+
+// Tab key handling
+function check_tab(element, event) {
+    if (event.key === 'Tab') {
+        event.preventDefault();
+        const start = element.selectionStart;
+        const end = element.selectionEnd;
+        // Insert tab character
+        element.value = element.value.substring(0, start) + "\t" + element.value.substring(end);
+        // Move the cursor after the tab
+        element.selectionStart = element.selectionEnd = start + 1;
+        // Update the highlighted code
+        update(element.value);
+    }
+}
+
 function recompile() {
     // Get the LaTeX content from the textarea
     const text = document.getElementById("editable-code").value; // Use .value to get the text
@@ -431,30 +454,7 @@ function recompile() {
         });
 }
 
-// Sync scrolling between editable and highlighted areas
-function sync_scroll(element) {
-    const highlightedCode = document.getElementById("highlighted-code");
-    highlightedCode.scrollTop = element.scrollTop;
-    highlightedCode.scrollLeft = element.scrollLeft;
-}
-
-// Tab key handling
-function check_tab(element, event) {
-    if (event.key === "Tab") {
-        event.preventDefault();
-        const start = element.selectionStart;
-        const end = element.selectionEnd;
-        // Insert tab character
-        element.value =
-            element.value.substring(0, start) +
-            "\t" +
-            element.value.substring(end);
-        // Move the cursor after the tab
-        element.selectionStart = element.selectionEnd = start + 1;
-        // Update the highlighted code
-        update(element.value);
-    }
-}
+document.getElementById("recompile").addEventListener('click', recompile);
 
 // Add this function to restore state from server
 async function loadInitialState() {
