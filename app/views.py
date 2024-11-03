@@ -72,6 +72,7 @@ def create_document(request):
     if request.method == 'POST':
         title = request.POST['title']
         content = request.POST['content']
-        Document.objects.create(title=title, content=content, owner=request.user)
+        img_content = request.FILES['img_content']
+        Document.objects.create(title=title, content=content, img_content=img_content, owner=request.user)
         return redirect('document_list')
     return render(request, 'app/document_form.html')
