@@ -29,6 +29,6 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
     path('documents/', views.document_list, name='document_list'),
-    path('', views.document_list, name='document_list'),
+    path('', views.landing, name='document_list'),
     path('documents/<int:document_id>/', views.document_detail, name='document_detail'),
 ]

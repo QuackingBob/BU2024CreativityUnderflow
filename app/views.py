@@ -197,3 +197,6 @@ def recompile_latex(request):
     }, status=405)
 
     
+
+def landing(request):
+    return render(request, 'frontend/landing.html')
