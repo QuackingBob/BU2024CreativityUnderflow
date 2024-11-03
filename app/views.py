@@ -40,7 +40,7 @@ def render_image(request):
     # save image to static folder
     with open('static/image.png', 'wb') as f:
         f.write(image.read())
-        
+
     
     generator = LaTeXGenerator()
     img = cv2.imread('static/image.png')
@@ -49,11 +49,19 @@ def render_image(request):
     latex = re.sub(r'```', '', latex)
     with open('static/output.tex', 'w') as f:
         f.write(latex)
-    
+
     # output output.pdf to static folder
     subprocess.run(['pdflatex', '-output-directory=static', 'static/output.tex'])
     pdf_path = 'static/output.pdf'
     if os.path.exists(pdf_path):
         return FileResponse(open(pdf_path, 'rb'), content_type='application/pdf')
-    
+
     return HttpResponse(status=500)
+
+def get_latex(request):
+    try:
+        with open('static/output.tex', 'r') as f:
+            latex_content = f.read()
+        return HttpResponse(latex_content, content_type='text/plain')
+    except FileNotFoundError:
+        return HttpResponse(status=404)

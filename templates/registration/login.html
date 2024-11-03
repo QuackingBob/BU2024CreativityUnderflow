@@ -9,8 +9,26 @@
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <style>
+      .btn-glow {
+        background-color: #c2a7ef !important;
+        border: none !important;
+        transition: all 0.3s ease !important;
+      }
+
+      .btn-glow:hover {
+        background-color: #8a65c9 !important;
+        box-shadow: 0 0 20px #8a65c9 !important;
+        transform: translateY(-2px) !important;
+      }
+
+      .btn-glow:active {
+        transform: translateY(0) !important;
+      }
+    </style>
   </head>
-  <body style="background-color: #8a65c9 ;">
+  <body style="background-color: #8a65c9;">
     <section class="ftco-section">
       <div class="container">
         <div class="row justify-content-center">
@@ -29,23 +47,22 @@
                   </div>
                 </div>
                 
-                <!-- Important: method="post" and action points to the login URL -->
                 <form method="post" action="{% url 'login' %}" class="signin-form">
                   {% csrf_token %}
                   
                   {% if form.errors %}
-                    <div class="alert alert-danger">
+                    <div class="alert alert-danger mb-4">
                       <p>Your username and password didn't match. Please try again.</p>
                     </div>
                   {% endif %}
 
                   {% if next %}
                     {% if user.is_authenticated %}
-                      <div class="alert alert-info">
+                      <div class="alert alert-info mb-4">
                         <p>Your account doesn't have access to this page. To proceed, please login with an account that has access.</p>
                       </div>
                     {% else %}
-                      <div class="alert alert-info">
+                      <div class="alert alert-info mb-4">
                         <p>Please login to see this page.</p>
                       </div>
                     {% endif %}
@@ -56,40 +73,39 @@
                         type="text" 
                         name="{{ form.username.name }}" 
                         id="{{ form.username.id_for_label }}" 
-                        class="form-control" 
+                        class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
                         required 
                         value="{{ form.username.value|default_if_none:'' }}" 
                         placeholder=" "
                     />
                     <label class="form-control-placeholder" for="{{ form.username.id_for_label }}">Username</label>
                     {% if form.username.errors %}
-                        <div class="alert alert-danger">
+                        <div class="field-error">
                             {{ form.username.errors }}
                         </div>
                     {% endif %}
-                </div>
-                
-
-                <div class="form-group">
-                  <input 
-                      type="password" 
-                      name="{{ form.password.name }}" 
-                      id="{{ form.password.id_for_label }}" 
-                      class="form-control" 
-                      required 
-                      placeholder=" "
-                  />
-                  <label class="form-control-placeholder" for="{{ form.password.id_for_label }}">Password</label>
-                  <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password"></span>
-                  {% if form.password.errors %}
-                      <div class="alert alert-danger">
-                          {{ form.password.errors }}
-                      </div>
-                  {% endif %}
-              </div>
+                  </div>
 
                   <div class="form-group">
-                    <button type="submit" class="form-control btn btn-primary rounded submit px-3">Sign In</button>
+                    <input 
+                        type="password" 
+                        name="{{ form.password.name }}" 
+                        id="{{ form.password.id_for_label }}" 
+                        class="form-control {% if form.password.errors %}is-invalid{% endif %}" 
+                        required 
+                        placeholder=" "
+                    />
+                    <label class="form-control-placeholder" for="{{ form.password.id_for_label }}">Password</label>
+                    <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+                    {% if form.password.errors %}
+                        <div class="field-error">
+                            {{ form.password.errors }}
+                        </div>
+                    {% endif %}
+                  </div>
+
+                  <div class="form-group">
+                    <button type="submit" class="form-control btn btn-glow rounded submit px-3">Sign In</button>
                   </div>
 
                   <div class="form-group d-md-flex">
@@ -104,7 +120,6 @@
                     </div>
                   </div>
 
-                  <!-- Add hidden next field if provided -->
                   <input type="hidden" name="next" value="{{ next }}">
                 </form>
                 <p class="text-center">Not a member? <a style="color:#8a65c9" href="{% url 'signup' %}"><b>Sign Up</b></a></p>

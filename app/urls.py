@@ -22,4 +22,6 @@ urlpatterns = [
     path("", views.document_form),
     path("list", views.document_list),
     path("render", views.render_image),
+    path('get_latex', views.get_latex, name='get_latex'),
+
 ]

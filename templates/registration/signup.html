@@ -1,17 +1,124 @@
-<!-- templates/registration/signup.html -->
-<!DOCTYPE html>
+{% load static %}
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
     <title>Sign Up</title>
-</head>
-<body>
-    <h2>Sign Up</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Sign Up</button>
-    </form>
-</body>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <style>
+      .btn-glow {
+        background-color: #c2a7ef !important;
+        border: none !important;
+        transition: all 0.3s ease !important;
+      }
+
+      .btn-glow:hover {
+        background-color: #8a65c9 !important;
+        box-shadow: 0 0 20px #8a65c9 !important;
+        transform: translateY(-2px) !important;
+      }
+
+      .btn-glow:active {
+        transform: translateY(0) !important;
+      }
+    </style>
+  </head>
+  <body style="background-color: #8a65c9;">
+    <section class="ftco-section">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-7 col-lg-5">
+            <div class="wrap">
+              <div class="login-wrap p-4 p-md-5">
+                <div class="d-flex">
+                  <div class="w-100">
+                    <h3 class="mb-4" style="font-family: Arial, Helvetica, sans-serif; color:#8a65c9"><b>Sign Up</b></h3>
+                  </div>
+                </div>
+                
+                <form method="post" action="{% url 'signup' %}" class="signup-form">
+                  {% csrf_token %}
+                  
+                  {% if form.errors %}
+                    <div class="alert alert-danger mb-4">
+                      <p>Please correct the errors below.</p>
+                    </div>
+                  {% endif %}
+
+                  <div class="form-group mt-3">
+                    <input 
+                        type="text" 
+                        name="{{ form.username.name }}" 
+                        id="{{ form.username.id_for_label }}" 
+                        class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
+                        required 
+                        value="{{ form.username.value|default_if_none:'' }}" 
+                        placeholder=" "
+                    />
+                    <label class="form-control-placeholder" for="{{ form.username.id_for_label }}">Username</label>
+                    {% if form.username.errors %}
+                        <div class="field-error">
+                            {{ form.username.errors }}
+                        </div>
+                    {% endif %}
+                  </div>
+
+                  <div class="form-group">
+                    <input 
+                        type="password" 
+                        name="{{ form.password1.name }}" 
+                        id="{{ form.password1.id_for_label }}" 
+                        class="form-control {% if form.password1.errors %}is-invalid{% endif %}" 
+                        required 
+                        placeholder=" "
+                    />
+                    <label class="form-control-placeholder" for="{{ form.password1.id_for_label }}">Password</label>
+                    <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+                    {% if form.password1.errors %}
+                        <div class="field-error">
+                            {{ form.password1.errors }}
+                        </div>
+                    {% endif %}
+                  </div>
+
+                  <div class="form-group">
+                    <input 
+                        type="password" 
+                        name="{{ form.password2.name }}" 
+                        id="{{ form.password2.id_for_label }}" 
+                        class="form-control {% if form.password2.errors %}is-invalid{% endif %}" 
+                        required 
+                        placeholder=" "
+                    />
+                    <label class="form-control-placeholder" for="{{ form.password2.id_for_label }}">Confirm Password</label>
+                    <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+                    {% if form.password2.errors %}
+                        <div class="field-error">
+                            {{ form.password2.errors }}
+                        </div>
+                    {% endif %}
+                  </div>
+
+                  <div class="form-group">
+                    <button type="submit" id="signupButton" class="form-control btn btn-glow rounded submit px-3">Sign Up</button>
+                  </div>
+                </form>
+                <p class="text-center">Already have an account? <a style="color:#8a65c9" href="{% url 'login' %}"><b>Sign In</b></a></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/popper.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+  </body>
 </html>

@@ -8377,3 +8377,25 @@ h1, h2, h3, h4, h5,
         border: 1px solid transparent;
         background: #8a65c9;
         color: #fff; }
+
+
+
+        .alert-danger {
+          background-color: #ffe8e8;
+          border: 1px solid #ffcccc;
+          color: #cc0000;
+          padding: 12px 15px;
+          border-radius: 5px;
+          margin: 15px 0;
+        }
+        
+        .form-group {
+          margin-bottom: 25px;
+        }
+        
+        .field-error {
+          color: #cc0000;
+          font-size: 0.9em;
+          margin-top: 8px;
+          margin-bottom: 8px;
+        } 
