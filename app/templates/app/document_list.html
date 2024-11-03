@@ -71,7 +71,7 @@
                         <div class="badge">{{ note.owner.username }}</div>
 
                         <div class="card-body">
-                            <h5 class="card-title" onclick="openNotePage('{{ note.docid }}')">{{ note.title }}</h5>
+                            <h5 class="card-title" onclick="openNotePage('{{ note.id }}')">{{ note.title }}</h5>
                             <p class="card-text">
                                 {{ note.content|linebreaks }} <!-- Renders LaTeX content if using a renderer -->
                             </p>
