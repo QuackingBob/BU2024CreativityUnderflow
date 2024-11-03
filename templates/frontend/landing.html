@@ -1,345 +1,403 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0" />
 
-    <!-- Box Icons -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/boxicons/2.1.4/css/boxicons.min.css"
-    />
-    
-    <!-- Swiper CSS -->
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'frontend/css/swiper-bundle.min.css' %}" />
+        <!-- Box Icons -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/boxicons/2.1.4/css/boxicons.min.css" />
 
-    <title>LaTeX Generation</title>
+        <!-- Swiper CSS -->
+        {% load static %}
+        <link
+            rel="stylesheet"
+            href="{% static 'frontend/css/swiper-bundle.min.css' %}" />
 
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+        <title>AuToTeX</title>
 
-      html {
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-      }
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
 
-      html::-webkit-scrollbar {
-        display: none;
-      }
+            html {
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
 
-      body {
-        font-family: Arial, sans-serif;
-        overflow: auto;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-      }
+            html::-webkit-scrollbar {
+                display: none;
+            }
 
-      body::-webkit-scrollbar {
-        display: none;
-      }
+            body {
+                font-family: Arial, sans-serif;
+                overflow: auto;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
 
-      .header {
-        position: fixed;
-        width: 100%;
-        top: 0;
-        left: 0;
-        z-index: 100;
-        background: rgba(255, 255, 255, 0.95);
-      }
+            body::-webkit-scrollbar {
+                display: none;
+            }
 
-      .nav {
-        height: 3.5rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 2rem;
-      }
+            .header {
+                position: fixed;
+                width: 100%;
+                top: 0;
+                left: 0;
+                z-index: 100;
+                background: rgba(255, 255, 255, 0.95);
+            }
 
-      .nav__logo {
-        color: #333;
-        font-weight: 700;
-        text-decoration: none;
-        font-size: 1.5rem;
-      }
+            .nav {
+                height: 3.5rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0 2rem;
+            }
 
-      .nav__list {
-        display: flex;
-        list-style: none;
-        gap: 2rem;
-      }
+            .nav__logo {
+                color: #333;
+                font-weight: 700;
+                text-decoration: none;
+                font-size: 1.5rem;
+            }
 
-      .nav__link {
-        color: #666;
-        text-decoration: none;
-        transition: color 0.3s;
-      }
+            .nav__list {
+                display: flex;
+                list-style: none;
+                gap: 2rem;
+            }
 
-      .nav__link:hover {
-        color: #333;
-      }
+            .nav__link {
+                color: #666;
+                text-decoration: none;
+                transition: color 0.3s;
+            }
 
-      .main {
-        height: 100vh;
-        position: relative;
-      }
+            .nav__link:hover {
+                color: #333;
+            }
 
-      .swiper {
-        width: 100%;
-        height: 100%;
-      }
+            .main {
+                height: 100vh;
+                position: relative;
+            }
 
-      .samples {
-        position: relative;
-        height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-      }
+            .swiper {
+                width: 100%;
+                height: 100%;
+            }
 
-      .samples__bg {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        z-index: -1;
-        filter: brightness(0.7);
-      }
+            .samples {
+                position: relative;
+                height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+            }
 
-      .samples__container {
-        color: white;
-        text-align: center;
-        padding: 2rem;
-        background: rgba(0, 0, 0, 0.6);
-        border-radius: 1rem;
-        max-width: 800px;
-        margin: 0 1rem;
-      }
+            .samples__bg {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                z-index: -1;
+                filter: brightness(0.7);
+            }
 
-      .samples__title {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-      }
+            .samples__container {
+                color: white;
+                text-align: center;
+                padding: 2rem;
+                background: rgba(0, 0, 0, 0.6);
+                border-radius: 1rem;
+                max-width: 800px;
+                margin: 0 1rem;
+            }
 
-      .samples__description {
-        font-size: 1.1rem;
-        margin-bottom: 1.5rem;
-      }
+            .samples__title {
+                font-size: 2.5rem;
+                margin-bottom: 1rem;
+            }
 
-      .video-container {
-        width: 100%;
-        max-width: 560px;
-        margin: 1.5rem auto;
-        aspect-ratio: 16/9;
-        background: rgba(0, 0, 0, 0.3);
-        border-radius: 0.5rem;
-        overflow: hidden;
-      }
+            .samples__description {
+                font-size: 1.1rem;
+                margin-bottom: 1.5rem;
+            }
 
-      .samples__button {
-        display: inline-flex;
-        align-items: center;
-        padding: 0.75rem 1.5rem;
-        background: #fff;
-        color: #333;
-        text-decoration: none;
-        border-radius: 0.5rem;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        font-weight: 600;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
+            .video-container {
+                width: 100%;
+                max-width: 560px;
+                margin: 1.5rem auto;
+                aspect-ratio: 16/9;
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 0.5rem;
+                overflow: hidden;
+            }
 
-      .samples__button:hover {
-        transform: translateY(-2px);
-        background: #f0f0f0;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      }
+            .samples__button {
+                display: inline-flex;
+                align-items: center;
+                padding: 0.75rem 1.5rem;
+                background: #fff;
+                color: #333;
+                text-decoration: none;
+                border-radius: 0.5rem;
+                transition: all 0.3s ease;
+                cursor: pointer;
+                font-weight: 600;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
 
-      .samples__button:active {
-        transform: translateY(0);
-      }
+            .samples__button:hover {
+                transform: translateY(-2px);
+                background: #f0f0f0;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
 
-      .samples__button-icon {
-        margin-left: 0.5rem;
-        transition: transform 0.3s;
-      }
+            .samples__button:active {
+                transform: translateY(0);
+            }
 
-      .samples__button:hover .samples__button-icon {
-        transform: translateX(4px);
-      }
+            .samples__button-icon {
+                margin-left: 0.5rem;
+                transition: transform 0.3s;
+            }
 
-      .gallery-thumbs {
-        position: absolute;
-        bottom: 2rem;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 90%;
-        max-width: 400px;
-        z-index: 10;
-      }
+            .samples__button:hover .samples__button-icon {
+                transform: translateX(4px);
+            }
 
-      .controls__img {
-        width: 100px;
-        height: 60px;
-        border-radius: 0.5rem;
-        object-fit: cover;
-        cursor: pointer;
-        opacity: 0.5;
-        transition: opacity 0.3s;
-      }
+            .gallery-thumbs {
+                position: absolute;
+                bottom: 2rem;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 90%;
+                max-width: 400px;
+                z-index: 10;
+            }
 
-      .swiper-slide-thumb-active .controls__img {
-        opacity: 1;
-        border: 2px solid #fff;
-      }
+            .controls__img {
+                width: 100px;
+                height: 60px;
+                border-radius: 0.5rem;
+                object-fit: cover;
+                cursor: pointer;
+                opacity: 0.5;
+                transition: opacity 0.3s;
+            }
 
-      .swiper-button-next,
-      .swiper-button-prev {
-        color: #fff;
-      }
+            .swiper-slide-thumb-active .controls__img {
+                opacity: 1;
+                border: 2px solid #fff;
+            }
 
-      @media screen and (max-width: 768px) {
-        .samples__title {
-          font-size: 2rem;
-        }
+            .swiper-button-next,
+            .swiper-button-prev {
+                color: #fff;
+            }
 
-        .controls__img {
-          width: 80px;
-          height: 50px;
-        }
+            @media screen and (max-width: 768px) {
+                .samples__title {
+                    font-size: 2rem;
+                }
 
-        .video-container {
-          max-width: 100%;
-        }
-      }
-    </style>
-  </head>
+                .controls__img {
+                    width: 80px;
+                    height: 50px;
+                }
 
-  <body>
-    <header class="header">
-      <nav class="nav">
-        <a href="#" class="nav__logo">AutoTex</a>
-        <ul class="nav__list">
-          <li class="nav__item"><a href="login" class="nav__link">Sign In</a></li>
-          <li class="nav__item"><a href="signup" class="nav__link">Sign Up</a></li>
-        </ul>
-      </nav>
-    </header>
+                .video-container {
+                    max-width: 100%;
+                }
+            }
+        </style>
+    </head>
 
-    <main class="main">
-      <div class="swiper gallery-top">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide samples">
-            <img src="{% static 'frontend/img/equation.jpg' %}" alt="" class="samples__bg" />
-            <div class="samples__container">
-              <h1 class="samples__title">Complex Equations</h1>
-              <p class="samples__description">
-                Transform complex handwritten equations flawlessly.
-              </p>
-              <div class="video-container">
-                <img src="{% static 'frontend/img/equation-demo.jpg' %}" alt="Equation demo video" />
-              </div>
-              <a href="signup" class="samples__button">
-                Try it! <i class="bx bx-right-arrow-alt samples__button-icon"></i>
-              </a>
+    <body>
+        <header class="header">
+            <nav class="nav">
+                <a
+                    href="#"
+                    class="nav__logo"
+                    >AutoTex</a
+                >
+                <ul class="nav__list">
+                    <li class="nav__item">
+                        <a
+                            href="login"
+                            class="nav__link"
+                            >Sign In</a
+                        >
+                    </li>
+                    <li class="nav__item">
+                        <a
+                            href="signup"
+                            class="nav__link"
+                            >Sign Up</a
+                        >
+                    </li>
+                </ul>
+            </nav>
+        </header>
+
+        <main class="main">
+            <div class="swiper gallery-top">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide samples">
+                        <img
+                            src="{% static 'frontend/img/equation.jpg' %}"
+                            alt=""
+                            class="samples__bg" />
+                        <div class="samples__container">
+                            <h1 class="samples__title">Complex Equations</h1>
+                            <p class="samples__description">
+                                Transform complex handwritten equations
+                                flawlessly.
+                            </p>
+                            <div class="video-container">
+                                <img
+                                    src="{% static 'frontend/img/equation-demo.jpg' %}"
+                                    alt="Equation demo video" />
+                            </div>
+                            <a
+                                href="signup"
+                                class="samples__button">
+                                Try it!
+                                <i
+                                    class="bx bx-right-arrow-alt samples__button-icon"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="swiper-slide samples">
+                        <img
+                            src="{% static 'frontend/img/note.jpg' %}"
+                            alt=""
+                            class="samples__bg" />
+                        <div class="samples__container">
+                            <h1 class="samples__title">Notes</h1>
+                            <p class="samples__description">
+                                Convert entire handwritten notes into
+                                professional formats.
+                            </p>
+                            <div class="video-container">
+                                <source
+                                    src="path/to/your/video.mp4"
+                                    type="video/mp4" />
+                            </div>
+                            <a
+                                href="signup"
+                                class="samples__button">
+                                Discover More
+                                <i
+                                    class="bx bx-right-arrow-alt samples__button-icon"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="swiper-slide samples">
+                        <img
+                            src="{% static 'frontend/img/structure.jpg' %}"
+                            alt=""
+                            class="samples__bg" />
+                        <div class="samples__container">
+                            <h1 class="samples__title">Complex Structures</h1>
+                            <p class="samples__description">
+                                Turn matrices and diagrams freely into
+                                research-grade material.
+                            </p>
+                            <div class="video-container">
+                                <img
+                                    src="{% static 'frontend/img/structure-demo.jpg' %}"
+                                    alt="Structures demo video" />
+                            </div>
+                            <a
+                                href="signup"
+                                class="samples__button">
+                                Learn More
+                                <i
+                                    class="bx bx-right-arrow-alt samples__button-icon"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
             </div>
-          </div>
 
-          <div class="swiper-slide samples">
-            <img src="{% static 'frontend/img/note.jpg' %}" alt="" class="samples__bg" />
-            <div class="samples__container">
-              <h1 class="samples__title">Notes</h1>
-              <p class="samples__description">
-                Convert entire handwritten notes into professional formats.
-              </p>
-              <div class="video-container">
-                <source src="path/to/your/video.mp4" type="video/mp4">
-              </div>
-              <a href="signup" class="samples__button">
-                Discover More <i class="bx bx-right-arrow-alt samples__button-icon"></i>
-              </a>
+            <div class="swiper gallery-thumbs">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <img
+                            src="{% static 'frontend/img/equation.jpg' %}"
+                            alt="equation thumbnail"
+                            class="controls__img" />
+                    </div>
+                    <div class="swiper-slide">
+                        <img
+                            src="{% static 'frontend/img/note.jpg' %}"
+                            alt="note thumbnail"
+                            class="controls__img" />
+                    </div>
+                    <div class="swiper-slide">
+                        <img
+                            src="{% static 'frontend/img/structure.jpg' %}"
+                            alt="structure thumbnail"
+                            class="controls__img" />
+                    </div>
+                </div>
             </div>
-          </div>
+        </main>
 
-          <div class="swiper-slide samples">
-            <img src="{% static 'frontend/img/structure.jpg' %}" alt="" class="samples__bg" />
-            <div class="samples__container">
-              <h1 class="samples__title">Complex Structures</h1>
-              <p class="samples__description">
-                Turn matrices and diagrams freely into research-grade material.
-              </p>
-              <div class="video-container">
-                <img src="{% static 'frontend/img/structure-demo.jpg' %}" alt="Structures demo video" />
-              </div>
-              <a href="signup" class="samples__button">
-                Learn More <i class="bx bx-right-arrow-alt samples__button-icon"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-        <div class="swiper-button-next"></div>
-        <div class="swiper-button-prev"></div>
-      </div>
+        <!-- GSAP -->
+        <script src="{% static 'frontend/js/gsap.min.js' %}"></script>
 
-      <div class="swiper gallery-thumbs">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide">
-            <img src="{% static 'frontend/img/equation.jpg' %}" alt="equation thumbnail" class="controls__img" />
-          </div>
-          <div class="swiper-slide">
-            <img src="{% static 'frontend/img/note.jpg' %}" alt="note thumbnail" class="controls__img" />
-          </div>
-          <div class="swiper-slide">
-            <img src="{% static 'frontend/img/structure.jpg' %}" alt="structure thumbnail" class="controls__img" />
-          </div>
-        </div>
-      </div>
-    </main>
+        <!-- Swiper JS -->
+        <script src="{% static 'frontend/js/swiper-bundle.min.js' %}"></script>
 
-    <!-- GSAP -->
-    <script src="{% static 'frontend/js/gsap.min.js' %}"></script>
+        <!-- Main JS -->
+        <script src="{% static 'frontend/js/main.js' %}"></script>
 
-    <!-- Swiper JS -->
-    <script src="{% static 'frontend/js/swiper-bundle.min.js' %}"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const thumbsSwiper = new Swiper(".gallery-thumbs", {
+                    spaceBetween: 10,
+                    slidesPerView: 3,
+                    freeMode: true,
+                    watchSlidesProgress: true,
+                    centerInsufficientSlides: true,
+                });
 
-    <!-- Main JS -->
-    <script src="{% static 'frontend/js/main.js' %}"></script>
-
-    <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        const thumbsSwiper = new Swiper('.gallery-thumbs', {
-          spaceBetween: 10,
-          slidesPerView: 3,
-          freeMode: true,
-          watchSlidesProgress: true,
-          centerInsufficientSlides: true,
-        });
-
-        const mainSwiper = new Swiper('.gallery-top', {
-          spaceBetween: 10,
-          navigation: {
-            nextEl: '.swiper-button-next',
-            prevEl: '.swiper-button-prev',
-          },
-          thumbs: {
-            swiper: thumbsSwiper,
-          },
-          effect: 'fade',
-          fadeEffect: {
-            crossFade: true
-          },
-          keyboard: {
-            enabled: true,
-          },
-          grabCursor: true,
-        });
-      });
-    </script>
-  </body>
+                const mainSwiper = new Swiper(".gallery-top", {
+                    spaceBetween: 10,
+                    navigation: {
+                        nextEl: ".swiper-button-next",
+                        prevEl: ".swiper-button-prev",
+                    },
+                    thumbs: {
+                        swiper: thumbsSwiper,
+                    },
+                    effect: "fade",
+                    fadeEffect: {
+                        crossFade: true,
+                    },
+                    keyboard: {
+                        enabled: true,
+                    },
+                    grabCursor: true,
+                });
+            });
+        </script>
+    </body>
 </html>
