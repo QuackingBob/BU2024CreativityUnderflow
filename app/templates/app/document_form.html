@@ -16,70 +16,38 @@
             href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" />
     </head>
 
-    <body>
-        <div class="container">
-            <div class="top-bar">
-                <div class="icon">
-                    <button
-                        class="button"
-                        id="backButton">
-                        <img
-                            src="{% static 'icons\back-arrow-direction-down-right-left-up-2-svgrepo-com.svg' %}"
-                            style="height: 1" />
+<body>
+    <div class="container">
+        <div class="top-bar">
+            <div class="icon">
+                <button class="button" id="backButton">
+                    <img src="{% static 'icons\back-arrow-direction-down-right-left-up-2-svgrepo-com.svg' %}" style="height: 1" />
+                </button>
+            </div>
+            <div class="toolbar">
+                <div class="visible" id="main-toolbox">
+                    <button class="button" id="penButton">
+                        <img src="{% static 'icons\pen-line-svgrepo-com.svg' %}" style="height: 1" />
+                    </button>
+                    <button class="button" id="eraserButton">
+                        <img src="{% static 'icons\eraser-svgrepo-com.svg' %}" style="height: 1" />
+                    </button>
+                    <button class="button" id="undoButton">
+                        <img src="{% static 'icons\undo-left-round-svgrepo-com.svg' %}" style="height: 1" />
+                    </button>
+                    <button class="button" id="redoButton">
+                        <img src="{% static 'icons\undo-right-round-svgrepo-com.svg' %}" style="height: 1" />
+                    </button>
+                    <button class="button" id="downloadButton">
+                        <img src="{% static 'icons\download-minimalistic-svgrepo-com.svg' %}" style="height: 1" />
                     </button>
                 </div>
-                <div class="toolbar">
-                    <div
-                        class="visible"
-                        id="main-toolbox">
-                        <button
-                            class="button"
-                            id="penButton">
-                            <img
-                                src="{% static 'icons\pen-line-svgrepo-com.svg' %}"
-                                style="height: 1" />
-                        </button>
-                        <button
-                            class="button"
-                            id="eraserButton">
-                            <img
-                                src="{% static 'icons\eraser-svgrepo-com.svg' %}"
-                                style="height: 1" />
-                        </button>
-                        <button
-                            class="button"
-                            id="undoButton">
-                            <img
-                                src="{% static 'icons\undo-left-round-svgrepo-com.svg' %}"
-                                style="height: 1" />
-                        </button>
-                        <button
-                            class="button"
-                            id="redoButton">
-                            <img
-                                src="{% static 'icons\undo-right-round-svgrepo-com.svg' %}"
-                                style="height: 1" />
-                        </button>
-                        <button
-                            class="button"
-                            id="downloadButton">
-                            <img
-                                src="{% static 'icons\upload-minimalistic-svgrepo-com.svg' %}"
-                                style="height: 1" />
-                        </button>
-                    </div>
-                    <div
-                        class="hidden"
-                        id="hidden-tools">
-                        <div
-                            class="button"
-                            id="split-view">
-                            <img
-                                src="{% static 'icons/split-two-svgrepo-com.svg' %}"
-                                style="height: 1" />
-                        </div>
+                <div class="hidden" id="hidden-tools">
+                    <div class="button" id="split-view">
+                        <img src="{% static 'icons/split-two-svgrepo-com.svg' %}" style="height: 1" />
                     </div>
                 </div>
+            </div>
 
                 <div
                     class="toggle"
