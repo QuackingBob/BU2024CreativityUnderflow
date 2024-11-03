@@ -57,3 +57,9 @@ window.onclick = function(event) {
         modal.style.display = "none";
     }
 }
+
+function displayFileName() {
+    const fileInput = document.getElementById("img_content");
+    const fileName = document.getElementById("file-name");
+    fileName.textContent = fileInput.files.length > 0 ? fileInput.files[0].name : "No file chosen";
+}

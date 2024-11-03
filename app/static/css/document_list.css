@@ -48,6 +48,7 @@
     border-radius: 10px;
     background-color: #f5f5f5;
 }
+
 .notes-bg {
     /* background-color: #c2a7ef;  /*Light purple background */
     padding: 10px 15px;
@@ -55,6 +56,11 @@
     margin: 5px 0;
     width: 100%;
     display: block;
+}
+
+.notes-bg:hover {
+    /* background-color: #c2a7ef;  /*Light purple background */
+    color: #5736a0;
 }
 
 /* Updated Notes link styling */
@@ -229,6 +235,14 @@
     cursor: pointer;
     font-size: 1.5em;
     color: #333;
+
+    padding: 8px 15px;
+    background-color: #ffffff00;
+    /* color: white; */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
 /* Form Card Styling */
@@ -295,4 +309,47 @@
 
 .submit-btn:hover {
     background-color: #c2a7ef;
+}
+
+.custom-file-upload {
+    padding-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.choose-file-btn {
+    padding: 8px 15px;
+    background-color: #ffffff00;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.choose-file-btn:hover {
+    background-color: #c2a7ef;
+}
+
+.choose-file-btn img {
+    width: 24px;
+    /* Set a specific width */
+    height: 24px;
+    /* Set a specific height */
+    max-width: 100%;
+    /* Ensure the image doesn’t grow beyond its container */
+    max-height: 100%;
+    object-fit: contain;
+    /* Preserve aspect ratio */
+    transition: transform 0.2s ease;
+}
+
+.choose-file-btn:hover img {
+    transform: scale(1.3);
+    /* Slightly enlarge on hover */
+}
+
+#file-name {
+    font-size: 14px;
+    color: #666;
 }
