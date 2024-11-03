@@ -10,21 +10,16 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
   </head>
-  <body>
+  <body style="background-color: #8a65c9 ;">
     <section class="ftco-section">
       <div class="container">
-        <div class="row justify-content-center">
-          <div class="col-md-6 text-center mb-5">
-            <h2 class="heading-section">Login</h2>
-          </div>
-        </div>
         <div class="row justify-content-center">
           <div class="col-md-7 col-lg-5">
             <div class="wrap">
               <div class="login-wrap p-4 p-md-5">
                 <div class="d-flex">
                   <div class="w-100">
-                    <h3 class="mb-4">Sign In</h3>
+                    <h3 class="mb-4" style="font-family: Arial, Helvetica, sans-serif; color:#8a65c9"><b>Sign In</b></h3>
                   </div>
                   <div class="w-100">
                     <p class="social-media d-flex justify-content-end">
@@ -99,7 +94,7 @@
 
                   <div class="form-group d-md-flex">
                     <div class="w-50 text-left">
-                      <label class="checkbox-wrap checkbox-primary mb-0">Remember Me
+                      <label class="checkbox-wrap checkbox-primary mb-0" style="color:#8a65c9">Remember Me
                         <input type="checkbox" name="remember">
                         <span class="checkmark"></span>
                       </label>
@@ -112,7 +107,7 @@
                   <!-- Add hidden next field if provided -->
                   <input type="hidden" name="next" value="{{ next }}">
                 </form>
-                <p class="text-center">Not a member? <a href="{% url 'signup' %}">Sign Up</a></p>
+                <p class="text-center">Not a member? <a style="color:#8a65c9" href="{% url 'signup' %}"><b>Sign Up</b></a></p>
               </div>
             </div>
           </div>
