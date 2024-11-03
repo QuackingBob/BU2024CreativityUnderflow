@@ -5,7 +5,7 @@ from django.http import HttpResponse, FileResponse, JsonResponse
 import os
 import subprocess
 import re
-
+from .forms import DocumentForm
 from .models import Document
 
 
@@ -13,60 +13,70 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Document
 from django.contrib.auth.decorators import login_required
 
-@login_required
-def document_list(request):
-    if request.user.is_authenticated:
-        # Get documents that belong to the logged-in user
-        documents = Document.objects.filter(owner=request.user)
-        print(len(documents))
-        print(f'username: {request.user}')
-    else:
-        # Option 1: Redirect unauthenticated users to the login page
-        return redirect('login')
-    return render(request, 'app/document_list.html', {'app': documents})
+from rest_framework import viewsets, permissions
+from .models import Document
+from .serializers import DocumentSerializer
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 
-@login_required
-def document_detail(request, doc_id):
-    document = get_object_or_404(Document, id=doc_id, owner=request.user)
-    return render(request, 'app/document_detail.html', {'app': document})
+class DocumentViewSet(viewsets.ModelViewSet):
+    """
+    A viewset that provides the standard actions
+    """
+    queryset = Document.objects.all()
+    serializer_class = DocumentSerializer
+    parser_classes = (MultiPartParser, FormParser)
 
+    def get_queryset(self):
+        """
+        Optionally restricts the returned documents to the owner,
+        by filtering against the authenticated user.
+        """
+        user = self.request.user
+        return Document.objects.filter(owner=user).order_by('-created_at')
 
-@login_required
-def document_form(request, doc_id=None):
-    if doc_id:
-        # Load existing document
-        document = get_object_or_404(Document, id=doc_id, owner=request.user)
-        return render(request, 'app/document_form.html', {'document': document})
-    return render(request, 'app/document_form.html')
-
-@login_required
-def save_document(request):
-    if request.method == 'POST':
-        # Get the image data from the request
-        image_data = request.FILES.get('image')
-        title = request.POST.get('title', 'Untitled')
-        latex_content = request.POST.get('latex_content', '')
+    def perform_create(self, serializer):
+        """
+        Associates the document with the authenticated user.
+        """
+        serializer.save(owner=self.request.user)
         
-        if 'document_id' in request.POST:
-            # Update existing document
-            document = get_object_or_404(Document, id=request.POST['document_id'], owner=request.user)
-            if image_data:
-                document.img_content = image_data
-            document.title = title
-            document.content = latex_content
-        else:
-            # Create new document
-            document = Document(
-                title=title,
-                content=latex_content,
-                img_content=image_data,
-                owner=request.user
-            )
-        
-        document.save()
-        return JsonResponse({'success': True, 'document_id': document.id})
     
-    return JsonResponse({'success': False}, status=400)
+    @action(detail=False, methods=['post'], url_path='save_document')
+    def save_document(self, request):
+        """
+        Custom action to handle saving a document with image upload.
+        """
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(owner=request.user)
+            return Response({'success': True, 'document_id': serializer.instance.id})
+        else:
+            return Response({'success': False, 'errors': serializer.errors}, status=400)
+
+@login_required
+def document_detail(request, document_id):
+    """
+    Display a specific document based on its ID.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        document_id (int): The ID of the document to display.
+
+    Returns:
+        HttpResponse: Renders the document_form.html template with the document context.
+    """
+    # Retrieve the document ensuring it belongs to the logged-in user
+    document = get_object_or_404(Document, id=document_id, owner=request.user)
+    
+    # Render the template with the document context
+    return render(request, 'app/document_form.html', {'document': document})
+
+def document_list(request):
+    documents = Document.objects.filter(owner=request.user)
+    return render(request, 'app/document_list.html', {'documents': documents})
 
 def render_image(request):
     # get image from request
@@ -99,13 +109,4 @@ def get_latex(request):
         return HttpResponse(latex_content, content_type='text/plain')
     except FileNotFoundError:
         return HttpResponse(status=404)
-    
-def create_document(request):
-    if request.method == 'POST':
-        title = request.POST['title']
-        content = request.POST['content']
-        img_content = request.FILES['img_content']
-        Document.objects.create(title=title, content=content, img_content=img_content, owner=request.user)
-        return redirect('document_list')
-    return render(request, 'app/document_form.html')
 

@@ -6,7 +6,7 @@
             name="viewport"
             content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         {% load static %}
-        <title>Website Layout</title>
+        <title>Document Form</title>
         <link
             rel="stylesheet"
             href="{% static 'css/form.css' %}" />
@@ -16,166 +16,101 @@
             href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" />
     </head>
 
-<body>
-    <div class="container">
-        <div class="top-bar">
-            <div class="icon">
-                <a href="/documents/">
-                <button class="button" id="backButton">
-                    <img src="{% static 'icons\back-arrow-direction-down-right-left-up-2-svgrepo-com.svg' %}" style="height: 1" />
-                </button>
-                </a>
-            </div>
-            <div class="toolbar">
-                <div class="visible" id="main-toolbox">
-                    <button class="button" id="penButton">
-                        <img src="{% static 'icons\pen-line-svgrepo-com.svg' %}" style="height: 1" />
+    <body>
+        <div class="container">
+            <div class="top-bar">
+                <div class="icon">
+                    <a href="/">
+                    <button class="button" id="backButton">
+                        <img src="{% static 'icons\back-arrow-direction-down-right-left-up-2-svgrepo-com.svg' %}" style="height: 1" />
                     </button>
-                    <button class="button" id="eraserButton">
-                        <img src="{% static 'icons\eraser-svgrepo-com.svg' %}" style="height: 1" />
-                    </button>
-                    <button class="button" id="undoButton">
-                        <img src="{% static 'icons\undo-left-round-svgrepo-com.svg' %}" style="height: 1" />
-                    </button>
-                    <button class="button" id="redoButton">
-                        <img src="{% static 'icons\undo-right-round-svgrepo-com.svg' %}" style="height: 1" />
-                    </button>
-                    <button class="button" id="downloadButton">
-                        <img src="{% static 'icons\download-minimalistic-svgrepo-com.svg' %}" style="height: 1" />
-                    </button>
+                    </a>
                 </div>
-                <div class="hidden" id="hidden-tools">
-                    <div class="button" id="split-view">
-                        <img src="{% static 'icons/split-two-svgrepo-com.svg' %}" style="height: 1" />
+                <div class="toolbar">
+                    <div class="visible" id="main-toolbox">
+                        <button class="button" id="penButton">
+                            <img src="{% static 'icons\pen-line-svgrepo-com.svg' %}" style="height: 1" />
+                        </button>
+                        <button class="button" id="eraserButton">
+                            <img src="{% static 'icons\eraser-svgrepo-com.svg' %}" style="height: 1" />
+                        </button>
+                        <button class="button" id="undoButton">
+                            <img src="{% static 'icons\undo-left-round-svgrepo-com.svg' %}" style="height: 1" />
+                        </button>
+                        <button class="button" id="redoButton">
+                            <img src="{% static 'icons\undo-right-round-svgrepo-com.svg' %}" style="height: 1" />
+                        </button>
+                        <button class="button" id="downloadButton">
+                            <img src="{% static 'icons\download-minimalistic-svgrepo-com.svg' %}" style="height: 1" />
+                        </button>
                     </div>
-                </div>
-                
-    <!-- Add save button -->
-    <button class="button" id="saveButton">
-        <img src="{% static 'icons/save-svgrepo-com.svg' %}" style="height: 1" />
-    </button>
-    
-    <!-- Add title input -->
-    <input type="text" id="documentTitle" placeholder="Document Title" 
-           value="{{ document.title|default:'Untitled' }}" />
-</div>
-            </div>
+                    <div class="hidden" id="hidden-tools">
+                        <div class="button" id="split-view">
+                            <img src="{% static 'icons/split-two-svgrepo-com.svg' %}" style="height: 1" />
+                        </div>
+                    </div>
+                    
+        <!-- Add save button -->
+        <button class="button" id="saveButton">
+            <img src="{% static 'icons/save.svg' %}" style="height: 1" />
+        </button>
+        
+        <!-- Add title input -->
+        <input type="text" id="documentTitle" placeholder="Document Title" 
+        value="{{ document.title|default:'Untitled' }}" />
+</div>            </div>
 
-                <div
-                    class="toggle"
-                    onclick="toggleSwitch(this)"
-                    id="preview-toggle"
-                    style="background-color: #ffffff">
-                    <div class="circle"></div>
-                </div>
+            <div
+                class="toggle"
+                onclick="toggleSwitch(this)"
+                id="preview-toggle"
+                style="background-color: #ffffff">
+                <div class="circle"></div>
             </div>
+            
             <div
                 class="render-preview"
                 id="hidden-preview"
                 style="display: none">
                 <div
-                    id="main-render"
-                    class="full">
-                    <object
-                        data="{% static 'test/Homework 7.pdf' %}"
-                        type="application/pdf"
-                        width="100%"
-                        height="100%">
-                        <p>
-                            Unable to display PDF file.
-                            <a href="">Download</a> instead.
-                        </p>
-                    </object>
-                </div>
-
-                <div
-                    id="main-source"
-                    style="display: none"
-                    class="split left">
-                    <div id="code-editor">
-                        <textarea
-                            id="editable-code"
-                            placeholder="Type your code or LaTeX here..."></textarea>
-                        <pre><code id="highlighted-code" class="language-latex"></code></pre>
-                    </div>
-                </div>
-
-                <!-- Add MathJax for LaTeX rendering -->
-                <!-- <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>             -->
+                id="main-render"
+                class="full">
+                <object
+                    data="{% static 'test/Homework 7.pdf' %}"
+                    type="application/pdf"
+                    width="100%"
+                    height="100%">
+                    <p>
+                        Unable to display PDF file.
+                        <a href="">Download</a> instead.
+                    </p>
+                </object>
             </div>
+
+            <div
+                id="main-source"
+                style="display: none"
+                class="split left">
+                <div id="code-editor">
+                    <textarea
+                        id="editable-code"
+                        placeholder="Type your code or LaTeX here..."></textarea>
+                    <pre><code id="highlighted-code" class="language-latex"></code></pre>
+                </div>
+            </div>            </div>
             <div
                 class="canvas"
                 id="view-canvas">
+                {% if document.img_content %}
+                <img src="{{ document.img_content.url }}" alt="Saved Image" id="savedImage" style="width: 100%; height: 100%;" />
+                {% else %}
                 <canvas id="drawCanvas"></canvas>
+                {% endif %}
             </div>
         </div>
 
         <script src="{% static 'js/form.js' %}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-latex.min.js"></script>
-
-<script>
-    // Add to your existing form.js or inline script
-    document.addEventListener('DOMContentLoaded', function() {
-        // Load existing document if available
-        {% if document %}
-            // Load saved image if it exists
-            if ("{{ document.img_content.url }}") {
-                const img = new Image();
-                img.onload = function() {
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    saveState(); // Save initial state after loading
-                };
-                img.src = "{{ document.img_content.url }}";
-            }
-            
-            // Load saved LaTeX content
-            if ("{{ document.content|escapejs }}") {
-                document.getElementById('editable-code').value = "{{ document.content|escapejs }}";
-                updateHighlighting(); // You'll need to implement this function
-            }
-        {% endif %}
-    
-        // Add save functionality
-        document.getElementById('saveButton').addEventListener('click', function() {
-            const formData = new FormData();
-            
-            // Convert canvas to blob
-            canvas.toBlob(function(blob) {
-                formData.append('image', blob, 'drawing.png');
-                formData.append('title', document.getElementById('documentTitle').value);
-                formData.append('latex_content', document.getElementById('editable-code').value);
-                
-                {% if document %}
-                    formData.append('document_id', '{{ document.id }}');
-                {% endif %}
-    
-                // Get CSRF token
-                const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-    
-                // Send to server
-                fetch('{% url "save_document" %}', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': csrftoken,
-                    },
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Document saved successfully!');
-                        // Optionally redirect to the document list
-                        // window.location.href = '/documents/';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error saving document');
-                });
-            }, 'image/png');
-        });
-    });
-    </script>
     </body>
 </html>

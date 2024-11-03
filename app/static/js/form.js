@@ -1,5 +1,5 @@
 const canvas = document.getElementById("drawCanvas");
-const ctx = canvas.getContext("2d");
+const ctx = canvas ? canvas.getContext("2d") : null;
 const max_hist = 10;
 
 function resizeCanvas() {
@@ -329,5 +329,82 @@ document.body.addEventListener(
 // Save initial state
 saveState();
 
+    img_content = models.ImageField(upload_to='documents/images/', blank=True, null=True)
 
 
+    document.addEventListener('DOMContentLoaded', function() {
+        const saveButton = document.getElementById('saveButton');
+        const documentForm = document.querySelector('.container');
+    
+        saveButton.addEventListener('click', async function(e) {
+            e.preventDefault();
+    
+            const title = document.getElementById('documentTitle').value;
+            const content = document.getElementById('editable-code').value;
+    
+            const canvas = document.getElementById("drawCanvas");
+            let imgBlob = null;
+    
+            if (canvas) {
+                imgBlob = await new Promise((resolve) => {
+                    canvas.toBlob(resolve, 'image/png');
+                });
+            }
+    
+            const formData = new FormData();
+            formData.append('title', title);
+            formData.append('content', content);
+            if (imgBlob) {
+                formData.append('img_content', imgBlob, 'drawing.png');
+            }
+    
+            {% if document %}
+                const documentId = '{{ document.id }}';
+                var url = `/api/documents/${documentId}/`;
+                var method = 'PUT';
+            {% else %}
+                var url = `/api/documents/`;
+                var method = 'POST';
+            {% endif %}
+    
+            // Get CSRF token
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== "") {
+                    const cookies = document.cookie.split(";");
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            const csrftoken = getCookie('csrftoken');
+    
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'X-CSRFToken': csrftoken,
+                    },
+                    body: formData
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    alert('Document saved successfully!');
+                    if (!{{ document|yesno:"true,false" }}) {
+                        window.location.href = `/documents/${data.id}/`;
+                    }
+                } else {
+                    alert('Error saving document');
+                    console.error(data.errors);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error saving document');
+            }
+        });
+    });
