@@ -6,14 +6,33 @@ import os
 import subprocess
 import re
 
-# Create your views here.
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Document
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def document_list(request):
+    if request.user.is_authenticated:
+        # Get documents that belong to the logged-in user
+        documents = Document.objects.filter(owner=request.user)
+        print(len(documents))
+        print(f'username: {request.user}')
+    else:
+        # Option 1: Redirect unauthenticated users to the login page
+        return redirect('login')
+    return render(request, 'app/document_list.html', {'app': documents})
+
+@login_required
+def document_detail(request, doc_id):
+    document = get_object_or_404(Document, id=doc_id, owner=request.user)
+    return render(request, 'app/document_detail.html', {'app': document})
+
+
 
 def document_form(request):
     return render(request, 'app/document_form.html')
 
-
-def document_list(request):
-    return render(request, 'app/document_list.html')
 
 def render_image(request):
     # get image from request

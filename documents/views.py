@@ -4,7 +4,7 @@ from .models import Document
 from django.contrib.auth.decorators import login_required
 from .forms import DocumentForm
 from django.contrib.auth.views import LoginView
-
+"""
 @login_required
 def document_list(request):
     if request.user.is_authenticated:
@@ -15,12 +15,12 @@ def document_list(request):
     else:
         # Option 1: Redirect unauthenticated users to the login page
         return redirect('login')
-    return render(request, 'documents/document_list.html', {'documents': documents})
+    return render(request, 'app/document_list.html', {'documents': documents})
 
 @login_required
 def document_detail(request, doc_id):
     document = get_object_or_404(Document, id=doc_id, owner=request.user)
-    return render(request, 'documents/document_detail.html', {'document': document})
+    return render(request, 'app/document_detail.html', {'document': document})
 
 @login_required
 def document_create(request):
@@ -34,7 +34,7 @@ def document_create(request):
     else:
         form = DocumentForm()
     return render(request, 'documents/document_form.html', {'form': form})
-
+"""
 
 @login_required
 def profile(request):
