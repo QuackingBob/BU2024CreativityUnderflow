@@ -104,37 +104,39 @@ function saveState() {
     historyIndex = history.length - 1;
 
     // Save to server
-    const documentId = document.querySelector('[data-document-id]').dataset.documentId;
+    const documentId =
+        document.querySelector("[data-document-id]").dataset.documentId;
     if (!documentId) {
-        console.error('No document ID found');
+        console.error("No document ID found");
         return;
     }
 
     const formData = new FormData();
     fetch(canvas.toDataURL())
-        .then(res => res.blob())
-        .then(blob => {
+        .then((res) => res.blob())
+        .then((blob) => {
             formData.append("img_content", blob, "canvas_state.png");
 
+
             return fetch(`/api/documents/${documentId}/update-state/`, {
-                method: 'PATCH',
+                method: "PATCH",
                 headers: {
-                    'X-CSRFToken': getCookie('csrftoken'),
+                    "X-CSRFToken": getCookie("csrftoken"),
                 },
-                body: formData
+                body: formData,
             });
         })
-        .then(response => {
+        .then((response) => {
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                throw new Error("Network response was not ok");
             }
             return response.json();
         })
-        .then(data => {
-            console.log('State saved successfully:', data);
+        .then((data) => {
+            console.log("State saved successfully:", data);
         })
-        .catch(error => {
-            console.error('Error saving state:', error);
+        .catch((error) => {
+            console.error("Error saving state:", error);
         });
 }
 
@@ -159,11 +161,6 @@ function saveCanvasAsPNG() {
     // Convert canvas to data URL
     const dataURL = canvas.toDataURL("image/png");
 
-    // Create a temporary link element
-    const link = document.createElement("a");
-    link.download = "drawing.png"; // Set filename
-    link.href = dataURL;
-
     // Create form data and append the blob
     const formData = new FormData();
     fetch(dataURL)
@@ -172,47 +169,56 @@ function saveCanvasAsPNG() {
             formData.append("image", blob, "drawing.png");
 
             // Send to server
-            fetch("/render", {
+            return fetch("/render", {
                 method: "POST",
                 headers: {
                     "X-CSRFToken": getCookie("csrftoken"),
                 },
                 body: formData,
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.blob();
-                })
-                .then(blob => {
-                    // Create object URL from blob
-                    const pdfUrl = URL.createObjectURL(blob);
+            });
+        })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.json(); // Parse JSON response instead of blob
+        })
+        .then((data) => {
+            // Convert base64 PDF back to blob
+            const pdfBlob = base64ToBlob(data.pdf, 'application/pdf');
+            const pdfUrl = URL.createObjectURL(pdfBlob);
 
-                    // Update the PDF viewer
-                    const pdfViewer = document.querySelector('#main-render object');
-                    pdfViewer.data = pdfUrl;
+            // Update the PDF viewer
+            const pdfViewer = document.querySelector("#main-render object");
+            pdfViewer.data = pdfUrl;
 
-                    // Show the preview if not already visible
-                    document.getElementById('hidden-preview').style.display = 'block';
-                    document.getElementById('view-canvas').style.display = 'none';
-                    document.getElementById('main-toolbox').style.display = 'none';
-                    document.getElementById('hidden-tools').style.display = 'block';
+            // Update the LaTeX editor if it exists
+            const editableCode = document.getElementById("editable-code");
+            if (editableCode) {
+                editableCode.value = data.latex;
+                update(data.latex); // Update syntax highlighting
+            }
 
-                    // Update toggle state
-                    const toggle = document.getElementById('preview-toggle');
-                    toggle.classList.add('active');
-                    toggle.style.backgroundColor = '#c2a7ef';
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
+            // Show the preview if not already visible
+            const toggle = document.getElementById("preview-toggle");
+            toggleSwitch(toggle);
+        })
+        .catch((error) => {
+            console.error("Error:", error);
         });
+}
 
-    // Programmatically click the link to trigger download
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+// Helper function to convert base64 to blob
+function base64ToBlob(base64, type = 'application/pdf') {
+    const binStr = atob(base64);
+    const len = binStr.length;
+    const arr = new Uint8Array(len);
+    
+    for (let i = 0; i < len; i++) {
+        arr[i] = binStr.charCodeAt(i);
+    }
+    
+    return new Blob([arr], { type: type });
 }
 
 function restoreState(dataURL) {
@@ -285,7 +291,10 @@ function toggleSource() {
     toggleViewable("main-source");
 
     main_elem = document.getElementById("main-render");
-    if (main_elem.classList.contains("split") && main_elem.classList.contains("right")) {
+    if (
+        main_elem.classList.contains("split") &&
+        main_elem.classList.contains("right")
+    ) {
         // If they are present, switch to "full"
         main_elem.classList.remove("split", "right");
         main_elem.classList.add("full");
@@ -298,13 +307,12 @@ function toggleSource() {
     button_elem = document.getElementById("split-view");
     if (button_elem.classList.contains("active")) {
         button_elem.classList.remove("active");
-    }
-    else {
+    } else {
         button_elem.classList.add("active");
     }
 }
 
-document.getElementById("split-view").addEventListener('click', toggleSource);
+document.getElementById("split-view").addEventListener("click", toggleSource);
 
 function toggleToolbarAnim(id) {
     elem = document.getElementById(id);
@@ -322,7 +330,6 @@ function toggleToolbarAnim(id) {
         elem.classList.add("hidden");
     }
 }
-
 
 function toggleSwitch(element) {
     element.classList.toggle("active");
@@ -368,7 +375,11 @@ saveState();
 
 function update(input) {
     // Use Prism to highlight the input value as LaTeX code
-    const highlightedCode = Prism.highlight(input, Prism.languages.latex, 'latex');
+    const highlightedCode = Prism.highlight(
+        input,
+        Prism.languages.latex,
+        "latex"
+    );
     document.getElementById("highlighted-code").innerHTML = highlightedCode;
 }
 
@@ -394,76 +405,51 @@ function check_tab(element, event) {
     }
 }
 
-function recompile() {
-    // Get the LaTeX content from the textarea
-    const text = document.getElementById("editable-code").value; // Use .value to get the text
-
-    // Get CSRF token from cookie
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== "") {
-            const cookies = document.cookie.split(";");
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === name + "=") {
-                    cookieValue = decodeURIComponent(
-                        cookie.substring(name.length + 1)
-                    );
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-    const csrftoken = getCookie("csrftoken");
-
-    // Create form data and append the LaTeX content
+function recompileLatex() {
+    const text = document.getElementById("editable-code").value;
     const formData = new FormData();
-    formData.append("latex", text); // Append the LaTeX content to form data
+    formData.append("latex", text);
 
-    // Send the LaTeX content to the server
     fetch("/recompile_latex", {
         method: "POST",
         headers: {
-            "X-CSRFToken": csrftoken,
+            "X-CSRFToken": getCookie("csrftoken"),
         },
         body: formData,
     })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.blob(); // Expect a blob response (PDF)
-        })
-        .then(blob => {
-            // Create an object URL from the blob
-            const pdfUrl = URL.createObjectURL(blob);
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Convert base64 PDF back to blob
+        const pdfBlob = base64ToBlob(data.pdf, 'application/pdf');
+        const pdfUrl = URL.createObjectURL(pdfBlob);
 
-            // Update the PDF viewer
-            const pdfViewer = document.querySelector('#main-render object');
-            pdfViewer.data = pdfUrl;
+        // Update the PDF viewer
+        const pdfViewer = document.querySelector("#main-render object");
+        pdfViewer.data = pdfUrl;
 
-            // Show the preview if not already visible
-            document.getElementById('hidden-preview').style.display = 'block';
-            document.getElementById('view-canvas').style.display = 'none';
-            document.getElementById('main-toolbox').style.display = 'none';
-            document.getElementById('hidden-tools').style.display = 'block';
-
-            // Update toggle state
-            const toggle = document.getElementById('preview-toggle');
-            toggle.classList.add('active');
-            toggle.style.backgroundColor = '#c2a7ef';
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+        // Update the LaTeX editor if needed
+        const editableCode = document.getElementById("editable-code");
+        if (editableCode && data.latex) {
+            editableCode.value = data.latex;
+            update(data.latex);
+        }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
 }
 
-document.getElementById("recompile").addEventListener('click', recompile);
+document.getElementById("recompile").addEventListener('click', recompileLatex);
 
 // Add this function to restore state from server
 async function loadInitialState() {
-    const documentId = document.querySelector('[data-document-id]').dataset.documentId;
+    const documentId =
+        document.querySelector("[data-document-id]").dataset.documentId;
     if (!documentId) return;
 
     try {
@@ -482,7 +468,7 @@ async function loadInitialState() {
             saveState(); // Save blank state to history
         }
     } catch (error) {
-        console.error('Error loading initial state:', error);
+        console.error("Error loading initial state:", error);
         saveState(); // Save blank state to history if loading fails
     }
 }
