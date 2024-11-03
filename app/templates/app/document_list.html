@@ -71,9 +71,7 @@
                         class="card-img-top" style="height: 50%;" />
                     {% endif %}
 
-                    <div class="badge">
-
-                    </div>
+                    <!-- <div class="badge"></div> -->
 
                     <div class="card-body">
                         <h5 class="card-title">
@@ -113,7 +111,7 @@
         <div class="modal-overlay" id="createDocumentModal">
             <div class="modal-content">
                 <div class="card create-document-form">
-                    <span class="badge close-modal" onclick="closeModal()">&times;</span>
+                    <span class="close-modal" onclick="closeModal()">&times;</span>
                     <h3>Create New Document</h3>
                     <form id="createDocumentForm">
                         {% csrf_token %}
@@ -125,7 +123,14 @@
                         <textarea id="content" name="content" required></textarea>
 
                         <label for="img_content">Image (optional):</label>
-                        <input type="file" id="img_content" name="img_content" accept="image/*" />
+                        <div class="custom-file-upload">
+                            <input type="file" id="img_content" name="img_content" accept="image/*" onchange="displayFileName()" hidden />
+                            <button type="button" onclick="document.getElementById('img_content').click()" class="choose-file-btn">
+                                <img src="{% static 'icons/album-svgrepo-com (1).svg' %}" style="height: 1" />
+                            </button>
+                            <span id="file-name">No file chosen</span>
+                        </div>
+                        <br>
 
                         <div class="form-footer">
                             <button type="submit" class="submit-btn">Create Document</button>
