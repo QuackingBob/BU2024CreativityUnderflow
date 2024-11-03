@@ -38,3 +38,11 @@ def render_image(request):
         return FileResponse(open(pdf_path, 'rb'), content_type='application/pdf')
     
     return HttpResponse(status=500)
+
+def get_latex(request):
+    try:
+        with open('static/output.tex', 'r') as f:
+            latex_content = f.read()
+        return HttpResponse(latex_content, content_type='text/plain')
+    except FileNotFoundError:
+        return HttpResponse(status=404)
