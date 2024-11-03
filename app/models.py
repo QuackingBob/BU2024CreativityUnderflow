@@ -8,7 +8,6 @@ class Document(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    id = models.IntegerField(primary_key=True)
 
     def __str__(self):
         return self.title

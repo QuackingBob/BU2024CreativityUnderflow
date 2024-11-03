@@ -41,8 +41,8 @@ class DocumentViewSet(viewsets.ModelViewSet):
         """
         Associates the document with the authenticated user.
         """
-        serializer.save(owner=self.request.user)
-        
+        print(self.request.data)
+        serializer.save(owner=self.request.user)        
     
     @action(detail=False, methods=['post'], url_path='save_document')
     def save_document(self, request):
