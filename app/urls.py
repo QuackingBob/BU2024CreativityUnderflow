@@ -23,5 +23,8 @@ urlpatterns = [
     path("list", views.document_list),
     path("render", views.render_image),
     path('get_latex', views.get_latex, name='get_latex'),
+    path('document/new/', views.document_form, name='document_form'),
+    path('document/<int:doc_id>/', views.document_form, name='document_edit'),
+    path('document/save/', views.save_document, name='save_document'),
 
 ]

@@ -49,6 +49,16 @@
                         <img src="{% static 'icons/split-two-svgrepo-com.svg' %}" style="height: 1" />
                     </div>
                 </div>
+                
+    <!-- Add save button -->
+    <button class="button" id="saveButton">
+        <img src="{% static 'icons/save-svgrepo-com.svg' %}" style="height: 1" />
+    </button>
+    
+    <!-- Add title input -->
+    <input type="text" id="documentTitle" placeholder="Document Title" 
+           value="{{ document.title|default:'Untitled' }}" />
+</div>
             </div>
 
                 <div
@@ -103,5 +113,69 @@
         <script src="{% static 'js/form.js' %}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-latex.min.js"></script>
+
+<script>
+    // Add to your existing form.js or inline script
+    document.addEventListener('DOMContentLoaded', function() {
+        // Load existing document if available
+        {% if document %}
+            // Load saved image if it exists
+            if ("{{ document.img_content.url }}") {
+                const img = new Image();
+                img.onload = function() {
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    saveState(); // Save initial state after loading
+                };
+                img.src = "{{ document.img_content.url }}";
+            }
+            
+            // Load saved LaTeX content
+            if ("{{ document.content|escapejs }}") {
+                document.getElementById('editable-code').value = "{{ document.content|escapejs }}";
+                updateHighlighting(); // You'll need to implement this function
+            }
+        {% endif %}
+    
+        // Add save functionality
+        document.getElementById('saveButton').addEventListener('click', function() {
+            const formData = new FormData();
+            
+            // Convert canvas to blob
+            canvas.toBlob(function(blob) {
+                formData.append('image', blob, 'drawing.png');
+                formData.append('title', document.getElementById('documentTitle').value);
+                formData.append('latex_content', document.getElementById('editable-code').value);
+                
+                {% if document %}
+                    formData.append('document_id', '{{ document.id }}');
+                {% endif %}
+    
+                // Get CSRF token
+                const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    
+                // Send to server
+                fetch('{% url "save_document" %}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrftoken,
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Document saved successfully!');
+                        // Optionally redirect to the document list
+                        // window.location.href = '/documents/';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error saving document');
+                });
+            }, 'image/png');
+        });
+    });
+    </script>
     </body>
 </html>
