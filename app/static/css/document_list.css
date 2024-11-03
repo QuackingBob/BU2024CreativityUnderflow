@@ -48,6 +48,14 @@
     border-radius: 10px;
     background-color: #f5f5f5;
 }
+.notes-bg {
+    /* background-color: #c2a7ef;  /*Light purple background */
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin: 5px 0;
+    width: 100%;
+    display: block;
+}
 
 /* Updated Notes link styling */
 .notes-link {
