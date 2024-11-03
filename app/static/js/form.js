@@ -98,8 +98,9 @@ function redo() {
         historyIndex++;
         restoreState(history[historyIndex]);
     }
-    saveCanvasAsPNG();
+    // saveCanvasAsPNG();
 }
+
 function saveCanvasAsPNG() {
     // Convert canvas to data URL
     const dataURL = canvas.toDataURL("image/png");
@@ -143,14 +144,33 @@ function saveCanvasAsPNG() {
                 },
                 body: formData,
             })
-                .then((response) => {
+                .then(response => {
                     if (!response.ok) {
-                        throw new Error("Network response was not ok");
+                        throw new Error('Network response was not ok');
                     }
-                    console.log("Image rendered successfully");
+                    return response.blob();
                 })
-                .catch((error) => {
-                    console.error("Error:", error);
+                .then(blob => {
+                    // Create object URL from blob
+                    const pdfUrl = URL.createObjectURL(blob);
+                    
+                    // Update the PDF viewer
+                    const pdfViewer = document.querySelector('#main-render object');
+                    pdfViewer.data = pdfUrl;
+                    
+                    // Show the preview if not already visible
+                    document.getElementById('hidden-preview').style.display = 'block';
+                    document.getElementById('view-canvas').style.display = 'none';
+                    document.getElementById('main-toolbox').style.display = 'none';
+                    document.getElementById('hidden-tools').style.display = 'block';
+                    
+                    // Update toggle state
+                    const toggle = document.getElementById('preview-toggle');
+                    toggle.classList.add('active');
+                    toggle.style.backgroundColor = '#c2a7ef';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
                 });
         });
 
@@ -216,6 +236,31 @@ function toggleViewable(id) {
     }
 }
 
+function toggleSource() {
+    toggleViewable("main-source");
+
+    main_elem = document.getElementById("main-render");
+    if (main_elem.classList.contains("split") && main_elem.classList.contains("right")) {
+        // If they are present, switch to "full"
+        main_elem.classList.remove("split", "right");
+        main_elem.classList.add("full");
+    } else {
+        // Otherwise, switch back to "split" and "right"
+        main_elem.classList.remove("full");
+        main_elem.classList.add("split", "right");
+    }
+
+    button_elem = document.getElementById("split-view");
+    if (button_elem.classList.contains("active")) {
+        button_elem.classList.remove("active");
+    }
+    else {
+        button_elem.classList.add("active");
+    }
+}
+
+document.getElementById("split-view").addEventListener('click', toggleSource);
+
 function toggleSwitch(element) {
     element.classList.toggle("active");
     toggle_elem = document.getElementById("preview-toggle");
@@ -256,3 +301,20 @@ document.body.addEventListener(
 
 // Save initial state
 saveState();
+
+// Get the textarea and highlighted code elements
+const editableCode = document.getElementById("editable-code");
+const highlightedCode = document.getElementById("highlighted-code");
+
+// Function to update syntax highlighting and render LaTeX
+editableCode.addEventListener("input", () => {
+    // Update the highlighted code content
+    highlightedCode.textContent = editableCode.value;
+
+    // Reapply syntax highlighting with Prism
+    Prism.highlightElement(highlightedCode);
+
+    // // Render LaTeX syntax with MathJax
+    // MathJax.typesetPromise([highlightedCode]);
+});
+
