@@ -4205,15 +4205,18 @@ textarea.form-control-lg {
   flex: 1 1 auto;
   padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x);
   color: var(--bs-card-color);
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .card-title {
   margin-bottom: var(--bs-card-title-spacer-y);
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .card-subtitle {
   margin-top: calc(-0.5 * var(--bs-card-title-spacer-y));
   margin-bottom: 0;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .card-text:last-child {
