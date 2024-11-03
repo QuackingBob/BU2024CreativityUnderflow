@@ -336,12 +336,31 @@ const highlightedCode = document.getElementById("highlighted-code");
 // Function to update syntax highlighting and render LaTeX
 editableCode.addEventListener("input", () => {
     // Update the highlighted code content
-    highlightedCode.textContent = editableCode.value;
+    const code = editableCode.value;
+    
+    // Detect if content contains LaTeX by checking for common LaTeX commands
+    const isLatex = /\\[a-zA-Z]+{.*}|\\begin{.*}|\\end{.*}/.test(code);
+    
+    // Set appropriate language class
+    highlightedCode.className = isLatex ? 'language-latex' : 'language-markup';
+    
+    // Escape HTML special characters if not LaTeX
+    const processedCode = isLatex ? code : code.replace(/&/g, '&amp;')
+                                              .replace(/</g, '&lt;')
+                                              .replace(/>/g, '&gt;');
+    
+    highlightedCode.textContent = processedCode;
 
     // Reapply syntax highlighting with Prism
     Prism.highlightElement(highlightedCode);
-
-    // // Render LaTeX syntax with MathJax
-    // MathJax.typesetPromise([highlightedCode]);
 });
+
+// Initial highlighting if there's content
+if (editableCode.value) {
+    const initialCode = editableCode.value;
+    const isLatex = /\\[a-zA-Z]+{.*}|\\begin{.*}|\\end{.*}/.test(initialCode);
+    highlightedCode.className = isLatex ? 'language-latex' : 'language-markup';
+    highlightedCode.textContent = initialCode;
+    Prism.highlightElement(highlightedCode);
+}
 
