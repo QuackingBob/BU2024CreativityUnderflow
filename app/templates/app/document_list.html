@@ -67,7 +67,8 @@
                     {% if note.img_content %}
                     <img src="{{ note.img_content.url }}" alt="Note Image" class="card-img-top" />
                     {% else %}
-                    <img src="{% static 'icons/error-box-svgrepo-com.svg' %}" alt="Placeholder Image" class="card-img-top" style="height: 50%;"/>
+                    <img src="{% static 'icons/error-box-svgrepo-com.svg' %}" alt="Placeholder Image"
+                        class="card-img-top" style="height: 50%;" />
                     {% endif %}
 
                     <div class="badge">
@@ -111,21 +112,27 @@
         <!-- Modal Structure -->
         <div class="modal-overlay" id="createDocumentModal">
             <div class="modal-content">
-                <span class="close-modal" onclick="closeModal()">&times;</span> <!-- Close button -->
-                <h3>Create New Document</h3>
-                <form id="createDocumentForm">
-                    {% csrf_token %}
-                    <label for="title">Title:</label>
-                    <input type="text" id="title" name="title" required />
+                <div class="card create-document-form">
+                    <span class="badge close-modal" onclick="closeModal()">&times;</span>
+                    <h3>Create New Document</h3>
+                    <form id="createDocumentForm">
+                        {% csrf_token %}
 
-                    <label for="content">Content:</label>
-                    <textarea id="content" name="content" required></textarea>
+                        <label for="title">Title:</label>
+                        <input type="text" id="title" name="title" required />
 
-                    <label for="img_content">Image (optional):</label>
-                    <input type="file" id="img_content" name="img_content" accept="image/*" />
+                        <label for="content">Content:</label>
+                        <textarea id="content" name="content" required></textarea>
 
-                    <button type="submit">Create Document</button>
-                </form>
+                        <label for="img_content">Image (optional):</label>
+                        <input type="file" id="img_content" name="img_content" accept="image/*" />
+
+                        <div class="form-footer">
+                            <button type="submit" class="submit-btn">Create Document</button>
+                        </div>
+                    </form>
+                </div>
+
             </div>
         </div>
 
