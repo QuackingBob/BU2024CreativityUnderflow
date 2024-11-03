@@ -103,6 +103,10 @@ function saveState() {
     history.push(canvas.toDataURL());
     historyIndex = history.length - 1;
 
+    uploadState();
+}
+
+function uploadState() {
     // Save to server
     const documentId =
         document.querySelector("[data-document-id]").dataset.documentId;
@@ -144,7 +148,8 @@ function undo() {
     if (historyIndex > 0) {
         historyIndex--;
         restoreState(history[historyIndex]);
-        saveState();
+        // saveState();
+        uploadState();
     }
 }
 
@@ -152,12 +157,40 @@ function redo() {
     if (historyIndex < history.length - 1) {
         historyIndex++;
         restoreState(history[historyIndex]);
-        saveState();
+        // saveState();
+        uploadState();
     }
     // saveCanvasAsPNG();
 }
 
-function saveCanvasAsPNG() {
+function downloadCanvasAsPNG() {
+    const dataURL = canvas.toDataURL("image/png");
+    const link = document.createElement("a");
+    link.download = "drawing.png";
+    link.href = dataURL;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function renderNote() {
+    // Show the loading indicator
+    // const loadingIndicator = document.getElementById("loadingIndicator");
+    // loadingIndicator.style.display = "block";
+
+    const renderButtonIcon = document.querySelector("#renderButton img");
+    const originalIconSrc = renderButtonIcon.src;
+    const pinwheelIcon = document.getElementById("pinwheel").src;
+    renderButtonIcon.src = pinwheelIcon; // Replace with the path to a spinner icon
+    renderButtonIcon.classList.add("spinner");
+
+    // const sleep = ms => new Promise(r => setTimeout(r, ms));
+    await sleep(500);
+
     // Convert canvas to data URL
     const dataURL = canvas.toDataURL("image/png");
 
@@ -205,7 +238,19 @@ function saveCanvasAsPNG() {
         })
         .catch((error) => {
             console.error("Error:", error);
+        })
+        .finally(() => {
+            // Revert the icon and remove spinner class
+            renderButtonIcon.src = originalIconSrc;
+            renderButtonIcon.classList.remove("spinner");
         });
+        
+        
+        // .finally(() => {
+        //     // Hide the loading indicator
+        //     loadingIndicator.style.display = "none";
+        // });
+
 }
 
 // Helper function to convert base64 to blob
@@ -249,7 +294,10 @@ document.getElementById("undoButton").addEventListener("click", undo);
 document.getElementById("redoButton").addEventListener("click", redo);
 document
     .getElementById("downloadButton")
-    .addEventListener("click", saveCanvasAsPNG);
+    .addEventListener("click", downloadCanvasAsPNG);
+document
+    .getElementById("renderButton")
+    .addEventListener("click", renderNote);
 
 function toggleActive(button) {
     document
@@ -371,7 +419,7 @@ document.body.addEventListener(
 );
 
 // Save initial state
-saveState();
+// saveState();
 
 function update(input) {
     // Use Prism to highlight the input value as LaTeX code
@@ -406,6 +454,9 @@ function check_tab(element, event) {
 }
 
 function recompileLatex() {
+    rerenderButton = document.getElementById("rerenderLatexBtn");
+    rerenderButton.classList.add("spinner");
+
     const text = document.getElementById("editable-code").value;
     const formData = new FormData();
     formData.append("latex", text);
@@ -441,6 +492,9 @@ function recompileLatex() {
     })
     .catch(error => {
         console.error("Error:", error);
+    })
+    .finally(() => {
+        rerenderButton.classList.remove("spinner");
     });
 }
 

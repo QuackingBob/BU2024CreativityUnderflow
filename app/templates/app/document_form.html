@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" />
 
     <link rel="stylesheet" href="{% static 'css/prism.css' %}">
+
+    <link rel="shortcut icon" type="image/png" href="{% static 'icons/AuToTeX_favicon.png' %}" >
 </head>
 
 <body>
@@ -41,11 +43,18 @@
                     <button class="button" id="downloadButton">
                         <img src="{% static 'icons\download-minimalistic-svgrepo-com.svg' %}" style="height: 1" />
                     </button>
+                    <button class="button" id="renderButton">
+                        <img src="{% static 'icons\document-1-svgrepo-com.svg' %}" style="height: 1" />
+                    </button>
+                    <!-- <button class="button" id="downloadButton"> -->
+                    <img class="spinner" id="pinwheel" src="{% static 'icons\pinwheel-line-svgrepo-com.svg' %}" style="height: 1; display: none;" />
+                    <!-- </button> -->
+                    <!-- <div id="loadingIndicator" style="display: none;">Loading...</div> -->
                     </a>
                 </div>
                 <div class="hidden" id="hidden-tools">
                     <div class="button" id="recompile">
-                        <img src="{% static 'icons\refresh-circle-svgrepo-com (2).svg' %}" style="height: 1" />
+                        <img id="rerenderLatexBtn" src="{% static 'icons\refresh-circle-svgrepo-com (2).svg' %}" style="height: 1" />
                     </div>
                     <div class="button" id="split-view">
                         <img src="{% static 'icons/split-two-svgrepo-com.svg' %}" style="height: 1" />
