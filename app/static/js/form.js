@@ -454,7 +454,7 @@ function check_tab(element, event) {
 }
 
 function recompileLatex() {
-    rerenderButton = document.getElementById("recompile");
+    rerenderButton = document.getElementById("rerenderLatexBtn");
     rerenderButton.classList.add("spinner");
 
     const text = document.getElementById("editable-code").value;
