@@ -37,12 +37,12 @@ body {
     background-color: #f7f7f7;
 }
 
-.top-bar .icon {
+/* .top-bar .icon {
     width: 15px;
     height: 15px;
     background-color: #c2a7ef;
     border-radius: 50%;
-}
+} */
 
 /* Container styling */
 .toggle {
