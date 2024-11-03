@@ -38,3 +38,22 @@ document
             alert("Failed to create document");
         }
     });
+
+
+// Function to open the modal
+function openModal() {
+    document.getElementById("createDocumentModal").style.display = "block";
+}
+
+// Function to close the modal
+function closeModal() {
+    document.getElementById("createDocumentModal").style.display = "none";
+}
+
+// Close the modal if user clicks outside of it
+window.onclick = function(event) {
+    const modal = document.getElementById("createDocumentModal");
+    if (event.target === modal) {
+        modal.style.display = "none";
+    }
+}

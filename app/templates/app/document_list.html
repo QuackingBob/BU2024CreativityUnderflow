@@ -1,125 +1,138 @@
 <!-- app/templates/app/document_list.html -->
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0" />
-        <title>Documents</title>
-        {% load static %}
-        <link
-            rel="stylesheet"
-            href="{% static 'css/document_list.css' %}" />
-    </head>
 
-    <body>
-        <div class="container">
-            <!-- Sidebar -->
-            <div class="sidebar">
-                <input
-                    type="text"
-                    id="searchInput"
-                    placeholder="🔍︎ Search..." />
-                <div class="notes-link">
-                    <b>Notes</b>
-                </div>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Documents</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/document_list.css' %}" />
+</head>
 
-                <!-- Logout button in container -->
-                <div class="logout-container">
-                    <form
-                        action="{% url 'logout' %}"
-                        method="post">
-                        {% csrf_token %}
-                        <button type="submit">Logout</button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Main content area -->
-            <div class="main-content">
-                <h2>Welcome, {{ user.username }}</h2>
-
-                <!-- Form to Create a New Document -->
-                <div class="create-document-form">
-                    <h3>Create New Document</h3>
-                    <form id="createDocumentForm">
-                        {% csrf_token %}
-                        <label for="title">Title:</label>
-                        <input
-                            type="text"
-                            id="title"
-                            name="title"
-                            required />
-
-                        <label for="content">Content:</label>
-                        <textarea
-                            id="content"
-                            name="content"
-                            required></textarea>
-
-                        <label for="img_content">Image (optional):</label>
-                        <input
-                            type="file"
-                            id="img_content"
-                            name="img_content"
-                            accept="image/*" />
-
-                        <button type="submit">Create Document</button>
-                    </form>
-                </div>
-
-                <div
-                    class="card-grid"
-                    id="documentsContainer">
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <input type="text" id="searchInput" placeholder="🔍︎ Search..." />
+            <div class="notes-link">
+                <h1><b>Notes</b></h1>
+                <ul class="note-list">
                     {% for note in documents %}
-                    <div class="card">
-                        {% if note.img_content %}
-                        <img
-                            src="{{ note.img_content.url }}"
-                            alt="Note Image"
-                            class="card-img-top" />
-                        {% endif %}
-
-                        <div class="badge">{{ note.owner.username }}</div>
-
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                <a href="{% url 'document_detail' note.id %}"
-                                    >{{ note.title }}</a
-                                >
-                            </h5>
-                            <p class="card-text">
-                                {{ note.content|linebreaks }}
-                                <!-- Renders LaTeX content if using a renderer -->
-                            </p>
-                        </div>
-
-                        <div class="card-footer">
-                            <p><strong>{{ note.owner.username }}</strong></p>
-                            <p>{{ note.created_at|date:"F j, Y" }}</p>
-                        </div>
-                    </div>
+                    <li>
+                        <a href="{% url 'document_detail' note.id %}">
+                            {{ note.title }}
+                        </a>
+                    </li>
                     {% empty %}
-                    <p>
-                        No documents found. Use the form above to create a new
-                        document.
-                    </p>
+                    <li>No notes available.</li>
                     {% endfor %}
-                </div>
+                </ul>
             </div>
 
-            <!-- Floating button -->
-            <button
-                class="floating-button"
-                onclick="document.getElementById('createDocumentForm').scrollIntoView()">
-                <img
-                    src="{% static 'icons/new-svgrepo-com.svg' %}"
-                    style="height: 24px; width: 24px" />
-            </button>
+            <!-- Logout button in container -->
+            <div class="logout-container">
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit">Logout</button>
+                </form>
+            </div>
         </div>
 
-        <!-- Include the JavaScript file -->
-        <script src="{% static 'js/document_list.js' %}"></script>
-    </body>
+        <!-- Main content area -->
+        <div class="main-content">
+            <h2>Welcome, {{ user.username }}</h2>
+
+            <!-- Form to Create a New Document -->
+            <!-- <div class="create-document-form">
+                <h3>Create New Document</h3>
+                <form id="createDocumentForm">
+                    {% csrf_token %}
+                    <label for="title">Title:</label>
+                    <input type="text" id="title" name="title" required />
+
+                    <label for="content">Content:</label>
+                    <textarea id="content" name="content" required></textarea>
+
+                    <label for="img_content">Image (optional):</label>
+                    <input type="file" id="img_content" name="img_content" accept="image/*" />
+
+                    <button type="submit">Create Document</button>
+                </form>
+            </div> -->
+
+            <div class="card-grid" id="documentsContainer">
+                {% for note in documents %}
+                <div class="card">
+                    {% if note.img_content %}
+                    <img src="{{ note.img_content.url }}" alt="Note Image" class="card-img-top" />
+                    {% else %}
+                    <img src="{% static 'icons/error-box-svgrepo-com.svg' %}" alt="Placeholder Image" class="card-img-top" style="height: 50%;"/>
+                    {% endif %}
+
+                    <div class="badge">
+
+                    </div>
+
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="{% url 'document_detail' note.id %}">{{ note.title }}</a>
+                        </h5>
+                        <p class="card-text">
+                            {{ note.content|linebreaks }}
+                            <!-- Renders LaTeX content if using a renderer -->
+                        </p>
+                    </div>
+
+                    <div class="card-footer">
+                        <p><strong>{{ note.owner.username }}</strong></p>
+                        <p>{{ note.created_at|date:"F j, Y" }}</p>
+                    </div>
+                </div>
+                {% empty %}
+                <p>
+                    No documents found. Use the form above to create a new
+                    document.
+                </p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Floating button -->
+        <!-- <button class="floating-button" onclick="document.getElementById('createDocumentForm').scrollIntoView()">
+            <img src="{% static 'icons/new-svgrepo-com.svg' %}" style="height: 24px; width: 24px" />
+        </button> -->
+
+        <!-- Button to open the modal -->
+        <button class="floating-button" onclick="openModal()">
+            <img src="{% static 'icons/new-svgrepo-com.svg' %}" style="height: 24px; width: 24px" />
+        </button>
+
+        <!-- Modal Structure -->
+        <div class="modal-overlay" id="createDocumentModal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeModal()">&times;</span> <!-- Close button -->
+                <h3>Create New Document</h3>
+                <form id="createDocumentForm">
+                    {% csrf_token %}
+                    <label for="title">Title:</label>
+                    <input type="text" id="title" name="title" required />
+
+                    <label for="content">Content:</label>
+                    <textarea id="content" name="content" required></textarea>
+
+                    <label for="img_content">Image (optional):</label>
+                    <input type="file" id="img_content" name="img_content" accept="image/*" />
+
+                    <button type="submit">Create Document</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Include the JavaScript file -->
+    <script src="{% static 'js/document_list.js' %}"></script>
+</body>
+
 </html>
