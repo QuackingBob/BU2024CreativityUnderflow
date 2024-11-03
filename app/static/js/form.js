@@ -104,37 +104,38 @@ function saveState() {
     historyIndex = history.length - 1;
 
     // Save to server
-    const documentId = document.querySelector('[data-document-id]').dataset.documentId;
+    const documentId =
+        document.querySelector("[data-document-id]").dataset.documentId;
     if (!documentId) {
-        console.error('No document ID found');
+        console.error("No document ID found");
         return;
     }
 
     const formData = new FormData();
     fetch(canvas.toDataURL())
-        .then(res => res.blob())
-        .then(blob => {
+        .then((res) => res.blob())
+        .then((blob) => {
             formData.append("img_content", blob, "canvas_state.png");
-            
+
             return fetch(`/api/documents/${documentId}/update-state/`, {
-                method: 'PATCH',
+                method: "PATCH",
                 headers: {
-                    'X-CSRFToken': getCookie('csrftoken'),
+                    "X-CSRFToken": getCookie("csrftoken"),
                 },
-                body: formData
+                body: formData,
             });
         })
-        .then(response => {
+        .then((response) => {
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                throw new Error("Network response was not ok");
             }
             return response.json();
         })
-        .then(data => {
-            console.log('State saved successfully:', data);
+        .then((data) => {
+            console.log("State saved successfully:", data);
         })
-        .catch(error => {
-            console.error('Error saving state:', error);
+        .catch((error) => {
+            console.error("Error saving state:", error);
         });
 }
 
@@ -179,33 +180,30 @@ function saveCanvasAsPNG() {
                 },
                 body: formData,
             })
-                .then(response => {
+                .then((response) => {
                     if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                        throw new Error("Network response was not ok");
                     }
                     return response.blob();
                 })
-                .then(blob => {
+                .then((blob) => {
                     // Create object URL from blob
                     const pdfUrl = URL.createObjectURL(blob);
 
                     // Update the PDF viewer
-                    const pdfViewer = document.querySelector('#main-render object');
+                    const pdfViewer = document.querySelector(
+                        "#main-render object"
+                    );
                     pdfViewer.data = pdfUrl;
 
-                    // Show the preview if not already visible
-                    document.getElementById('hidden-preview').style.display = 'block';
-                    document.getElementById('view-canvas').style.display = 'none';
-                    document.getElementById('main-toolbox').style.display = 'none';
-                    document.getElementById('hidden-tools').style.display = 'block';
+                    // Show the preview if not already visibl
 
                     // Update toggle state
-                    const toggle = document.getElementById('preview-toggle');
-                    toggle.classList.add('active');
-                    toggle.style.backgroundColor = '#c2a7ef';
+                    const toggle = document.getElementById("preview-toggle");
+                    toggleSwitch(toggle);
                 })
-                .catch(error => {
-                    console.error('Error:', error);
+                .catch((error) => {
+                    console.error("Error:", error);
                 });
         });
 
@@ -285,7 +283,10 @@ function toggleSource() {
     toggleViewable("main-source");
 
     main_elem = document.getElementById("main-render");
-    if (main_elem.classList.contains("split") && main_elem.classList.contains("right")) {
+    if (
+        main_elem.classList.contains("split") &&
+        main_elem.classList.contains("right")
+    ) {
         // If they are present, switch to "full"
         main_elem.classList.remove("split", "right");
         main_elem.classList.add("full");
@@ -298,13 +299,12 @@ function toggleSource() {
     button_elem = document.getElementById("split-view");
     if (button_elem.classList.contains("active")) {
         button_elem.classList.remove("active");
-    }
-    else {
+    } else {
         button_elem.classList.add("active");
     }
 }
 
-document.getElementById("split-view").addEventListener('click', toggleSource);
+document.getElementById("split-view").addEventListener("click", toggleSource);
 
 function toggleToolbarAnim(id) {
     elem = document.getElementById(id);
@@ -322,7 +322,6 @@ function toggleToolbarAnim(id) {
         elem.classList.add("hidden");
     }
 }
-
 
 function toggleSwitch(element) {
     element.classList.toggle("active");
@@ -368,12 +367,13 @@ saveState();
 
 function update(input) {
     // Use Prism to highlight the input value as LaTeX code
-    const highlightedCode = Prism.highlight(input, Prism.languages.latex, 'latex');
+    const highlightedCode = Prism.highlight(
+        input,
+        Prism.languages.latex,
+        "latex"
+    );
     document.getElementById("highlighted-code").innerHTML = highlightedCode;
 }
-
-
-
 
 function recompile() {
     // Get the LaTeX content from the textarea
@@ -410,33 +410,24 @@ function recompile() {
         },
         body: formData,
     })
-        .then(response => {
+        .then((response) => {
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                throw new Error("Network response was not ok");
             }
             return response.blob(); // Expect a blob response (PDF)
         })
-        .then(blob => {
+        .then((blob) => {
             // Create an object URL from the blob
             const pdfUrl = URL.createObjectURL(blob);
 
             // Update the PDF viewer
-            const pdfViewer = document.querySelector('#main-render object');
+            const pdfViewer = document.querySelector("#main-render object");
             pdfViewer.data = pdfUrl;
 
-            // Show the preview if not already visible
-            document.getElementById('hidden-preview').style.display = 'block';
-            document.getElementById('view-canvas').style.display = 'none';
-            document.getElementById('main-toolbox').style.display = 'none';
-            document.getElementById('hidden-tools').style.display = 'block';
-
-            // Update toggle state
-            const toggle = document.getElementById('preview-toggle');
-            toggle.classList.add('active');
-            toggle.style.backgroundColor = '#c2a7ef';
+            toggleSwitch(document.getElementById("preview-toggle"));
         })
-        .catch(error => {
-            console.error('Error:', error);
+        .catch((error) => {
+            console.error("Error:", error);
         });
 }
 
@@ -449,12 +440,15 @@ function sync_scroll(element) {
 
 // Tab key handling
 function check_tab(element, event) {
-    if (event.key === 'Tab') {
+    if (event.key === "Tab") {
         event.preventDefault();
         const start = element.selectionStart;
         const end = element.selectionEnd;
         // Insert tab character
-        element.value = element.value.substring(0, start) + "\t" + element.value.substring(end);
+        element.value =
+            element.value.substring(0, start) +
+            "\t" +
+            element.value.substring(end);
         // Move the cursor after the tab
         element.selectionStart = element.selectionEnd = start + 1;
         // Update the highlighted code
@@ -462,21 +456,20 @@ function check_tab(element, event) {
     }
 }
 
-
-
 // Add this function to restore state from server
 async function loadInitialState() {
-    const documentId = document.querySelector('[data-document-id]').dataset.documentId;
+    const documentId =
+        document.querySelector("[data-document-id]").dataset.documentId;
     if (!documentId) return;
 
     try {
         const response = await fetch(`/api/documents/${documentId}/`);
         const document = await response.json();
-        
+
         if (document.img_content) {
             const img = new Image();
             img.src = document.img_content;
-            img.onload = function() {
+            img.onload = function () {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.drawImage(img, 0, 0);
                 saveState(); // Save initial state to history
@@ -485,7 +478,7 @@ async function loadInitialState() {
             saveState(); // Save blank state to history
         }
     } catch (error) {
-        console.error('Error loading initial state:', error);
+        console.error("Error loading initial state:", error);
         saveState(); // Save blank state to history if loading fails
     }
 }
