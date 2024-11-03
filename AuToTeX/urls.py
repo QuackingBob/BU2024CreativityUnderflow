@@ -27,13 +27,11 @@ urlpatterns = [
     path('login/', docviews.CustomLoginView.as_view(), name='login'),  # Adjust according to your project
     path('signup/', docviews.signup, name='signup'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('home/', docviews.home)
+    path('', docviews.landing, name='landing')
 ]
 
 # include the app urls
-urlpatterns += [
-    path('', include('app.urls')),
-]
+ 
 
 
 if settings.DEBUG:

@@ -37,7 +37,7 @@ class CustomLoginView(LoginView):
         # Use the next parameter for redirection
         return super().form_valid(form)
     
+ 
 
-def home(request):
-    form=  DocumentForm()
-    return render(request, 'app/home.html')
+def landing(request):
+    return render(request, 'frontend/landing.html')
