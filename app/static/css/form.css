@@ -24,7 +24,7 @@ body {
     height: 100%;
     background-color: white;
     /* border-radius: 15px; */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); */
     overflow: hidden;
     position: relative;
 }
@@ -51,7 +51,7 @@ body {
     justify-content: center;
     width: 30px;
     height: 20px;
-    border: 2px solid #c2a7ef;
+    border: 2px solid #7b5bbf;
     background-color: #ffffff;
     border-radius: 10px;
     position: relative;
@@ -64,10 +64,11 @@ body {
 .toggle .circle {
     width: 12px;
     height: 12px;
-    background-color: #c2a7ef;
+    background-color: #7b5bbf;
     border-radius: 50%;
     position: absolute;
-    right: 2px;
+    left: 2px;
+    /* right: auto; */
     /* Starting position */
     transition: all 0.3s ease;
     /* Smooth transition for all properties */
@@ -80,12 +81,11 @@ body {
 }
 
 .toggle.active .circle {
-    left: 2px;
-    /* Move to the left side */
-    right: auto;
-    /* Disable the right position */
+    right: 2px;
+    left: auto;
     background-color: #7b5bbf;
     /* Change circle color when active */
+    transition: all 0.3s ease;
 }
 
 .canvas {
@@ -194,19 +194,24 @@ canvas {
 }
 
 /* Hidden state - initial values */
-/* .hidden {
+.hidden {
     max-height: 0;
     opacity: 0;
     overflow: hidden;
+    /* max-height: 0;
+    opacity: 0; */
     transition: max-height 0.5s ease, opacity 0.5s ease;
-} */
+}
 
 /* Visible state - expanded */
-/* .visible {
-    max-height: 500px;
+.visible {
+    /* max-height: 500px;
+    opacity: 1; */
+    overflow: hidden;
+    max-height: 200px; /* Adjust to fit the content height */
     opacity: 1;
     transition: max-height 0.5s ease, opacity 0.5s ease;
-} */
+}
 
 #code-editor {
     position: relative;
@@ -251,4 +256,3 @@ canvas {
     overflow-wrap: break-word;
     z-index: 0;
 }
-

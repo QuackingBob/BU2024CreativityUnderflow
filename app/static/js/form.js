@@ -215,6 +215,14 @@ function toggleViewable(id) {
     } else {
         elem.style.display = "none";
     }
+
+    // if (elem.classList.contains("hidden")) {
+    //     elem.classList.remove("hidden");
+    //     elem.classList.add("visible");
+    // } else {
+    //     elem.classList.remove("visible");
+    //     elem.classList.add("hidden");
+    // }
 }
 
 function toggleSource() {
@@ -242,6 +250,24 @@ function toggleSource() {
 
 document.getElementById("split-view").addEventListener('click', toggleSource);
 
+function toggleToolbarAnim(id) {
+    elem = document.getElementById(id);
+    // if (elem.style.display == "none") {
+    //     elem.style.display = "block";
+    // } else {
+    //     elem.style.display = "none";
+    // }
+
+    if (elem.classList.contains("hidden")) {
+        elem.classList.remove("hidden");
+        elem.classList.add("visible");
+    } else {
+        elem.classList.remove("visible");
+        elem.classList.add("hidden");
+    }
+}
+
+
 function toggleSwitch(element) {
     element.classList.toggle("active");
     toggle_elem = document.getElementById("preview-toggle");
@@ -253,9 +279,10 @@ function toggleSwitch(element) {
 
     toggleViewable("hidden-preview");
     toggleViewable("view-canvas");
-    toggleViewable("main-toolbox");
-    toggleViewable("hidden-tools");
-
+    // toggleViewable("main-toolbox");
+    // toggleViewable("hidden-tools");
+    toggleToolbarAnim("main-toolbox");
+    toggleToolbarAnim("hidden-tools");
     // print("Toggle View")
 }
 
