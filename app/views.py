@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from langchain_demos.constraint_gen import LaTeXGenerator
 import cv2
-from django.http import HttpResponse
+from django.http import HttpResponse, FileResponse
+import os
 import subprocess
 import re
 
@@ -32,7 +33,8 @@ def render_image(request):
     
     # output output.pdf to static folder
     subprocess.run(['pdflatex', '-output-directory=static', 'static/output.tex'])
+    pdf_path = 'static/output.pdf'
+    if os.path.exists(pdf_path):
+        return FileResponse(open(pdf_path, 'rb'), content_type='application/pdf')
     
-
-
-    return HttpResponse(status=200)
+    return HttpResponse(status=500)
