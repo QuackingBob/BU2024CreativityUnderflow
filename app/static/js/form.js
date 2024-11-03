@@ -161,11 +161,6 @@ function saveCanvasAsPNG() {
     // Convert canvas to data URL
     const dataURL = canvas.toDataURL("image/png");
 
-    // Create a temporary link element
-    const link = document.createElement("a");
-    link.download = "drawing.png"; // Set filename
-    link.href = dataURL;
-
     // Create form data and append the blob
     const formData = new FormData();
     fetch(dataURL)
@@ -174,44 +169,56 @@ function saveCanvasAsPNG() {
             formData.append("image", blob, "drawing.png");
 
             // Send to server
-            fetch("/render", {
+            return fetch("/render", {
                 method: "POST",
                 headers: {
                     "X-CSRFToken": getCookie("csrftoken"),
                 },
                 body: formData,
-            })
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error("Network response was not ok");
-                    }
-                    return response.blob();
-                })
-                .then((blob) => {
-                    // Create object URL from blob
-                    const pdfUrl = URL.createObjectURL(blob);
+            });
+        })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.json(); // Parse JSON response instead of blob
+        })
+        .then((data) => {
+            // Convert base64 PDF back to blob
+            const pdfBlob = base64ToBlob(data.pdf, 'application/pdf');
+            const pdfUrl = URL.createObjectURL(pdfBlob);
 
-                    // Update the PDF viewer
-                    const pdfViewer = document.querySelector(
-                        "#main-render object"
-                    );
-                    pdfViewer.data = pdfUrl;
+            // Update the PDF viewer
+            const pdfViewer = document.querySelector("#main-render object");
+            pdfViewer.data = pdfUrl;
 
-                    // Show the preview if not already visibl
+            // Update the LaTeX editor if it exists
+            const editableCode = document.getElementById("editable-code");
+            if (editableCode) {
+                editableCode.value = data.latex;
+                update(data.latex); // Update syntax highlighting
+            }
 
-                    // Update toggle state
-                    const toggle = document.getElementById("preview-toggle");
-                    toggleSwitch(toggle);
-                })
-                .catch((error) => {
-                    console.error("Error:", error);
-                });
+            // Show the preview if not already visible
+            const toggle = document.getElementById("preview-toggle");
+            toggleSwitch(toggle);
+        })
+        .catch((error) => {
+            console.error("Error:", error);
         });
+}
 
-    // Programmatically click the link to trigger download
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+// Helper function to convert base64 to blob
+function base64ToBlob(base64, type = 'application/pdf') {
+    const binStr = atob(base64);
+    const len = binStr.length;
+    const arr = new Uint8Array(len);
+    
+    for (let i = 0; i < len; i++) {
+        arr[i] = binStr.charCodeAt(i);
+    }
+    
+    return new Blob([arr], { type: type });
 }
 
 function restoreState(dataURL) {
@@ -398,63 +405,46 @@ function check_tab(element, event) {
     }
 }
 
-function recompile() {
-    // Get the LaTeX content from the textarea
-    const text = document.getElementById("editable-code").value; // Use .value to get the text
-
-    // Get CSRF token from cookie
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== "") {
-            const cookies = document.cookie.split(";");
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === name + "=") {
-                    cookieValue = decodeURIComponent(
-                        cookie.substring(name.length + 1)
-                    );
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-    const csrftoken = getCookie("csrftoken");
-
-    // Create form data and append the LaTeX content
+function recompileLatex() {
+    const text = document.getElementById("editable-code").value;
     const formData = new FormData();
-    formData.append("latex", text); // Append the LaTeX content to form data
+    formData.append("latex", text);
 
-    // Send the LaTeX content to the server
     fetch("/recompile_latex", {
         method: "POST",
         headers: {
-            "X-CSRFToken": csrftoken,
+            "X-CSRFToken": getCookie("csrftoken"),
         },
         body: formData,
     })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-            return response.blob(); // Expect a blob response (PDF)
-        })
-        .then((blob) => {
-            // Create an object URL from the blob
-            const pdfUrl = URL.createObjectURL(blob);
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Convert base64 PDF back to blob
+        const pdfBlob = base64ToBlob(data.pdf, 'application/pdf');
+        const pdfUrl = URL.createObjectURL(pdfBlob);
 
-            // Update the PDF viewer
-            const pdfViewer = document.querySelector("#main-render object");
-            pdfViewer.data = pdfUrl;
+        // Update the PDF viewer
+        const pdfViewer = document.querySelector("#main-render object");
+        pdfViewer.data = pdfUrl;
 
-            toggleSwitch(document.getElementById("preview-toggle"));
-        })
-        .catch((error) => {
-            console.error("Error:", error);
-        });
+        // Update the LaTeX editor if needed
+        const editableCode = document.getElementById("editable-code");
+        if (editableCode && data.latex) {
+            editableCode.value = data.latex;
+            update(data.latex);
+        }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
 }
 
-document.getElementById("recompile").addEventListener('click', recompile);
+document.getElementById("recompile").addEventListener('click', recompileLatex);
 
 // Add this function to restore state from server
 async function loadInitialState() {

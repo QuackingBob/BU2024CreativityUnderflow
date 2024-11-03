@@ -7,7 +7,7 @@ import subprocess
 import re
 from .forms import DocumentForm
 from .models import Document
-
+import base64
 
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Document
@@ -134,9 +134,19 @@ def render_image(request):
     subprocess.run(['pdflatex', '-output-directory=static', 'static/output.tex'])
     pdf_path = 'static/output.pdf'
     if os.path.exists(pdf_path):
-        return FileResponse(open(pdf_path, 'rb'), content_type='application/pdf')
+        # Return both PDF and latex content in JSON response
+        with open(pdf_path, 'rb') as pdf_file:
+            pdf_content = pdf_file.read()
+            pdf_base64 = base64.b64encode(pdf_content).decode('utf-8')
+            
+            return JsonResponse({
+                'pdf': pdf_base64,
+                'latex': latex
+            })
 
-    return HttpResponse(status=500)
+        return JsonResponse({
+            'error': 'PDF generation failed'
+        }, status=500)
 
 def get_latex(request):
     try:
@@ -163,14 +173,27 @@ def recompile_latex(request):
             
             # Check if the PDF was created successfully
             if os.path.exists(pdf_path):
-                return FileResponse(open(pdf_path, 'rb'), content_type='application/pdf')
+                # Return both PDF and latex content in JSON response
+                with open(pdf_path, 'rb') as pdf_file:
+                    pdf_content = pdf_file.read()
+                    pdf_base64 = base64.b64encode(pdf_content).decode('utf-8')
+                    
+                return JsonResponse({
+                    'pdf': pdf_base64,
+                    'latex': latex
+                })
             else:
-                return HttpResponse("PDF compilation failed.", status=500)
+                return JsonResponse({
+                    'error': 'PDF compilation failed'
+                }, status=500)
         
         except subprocess.CalledProcessError as e:
-            # Log the error or return an error response
-            return HttpResponse(f"Compilation error: {e.stderr.decode()}", status=500)
+            return JsonResponse({
+                'error': f"Compilation error: {e.stderr.decode()}"
+            }, status=500)
     
-    return HttpResponse("Invalid request method.", status=405)
+    return JsonResponse({
+        'error': "Invalid request method."
+    }, status=405)
 
     
