@@ -454,6 +454,9 @@ function check_tab(element, event) {
 }
 
 function recompileLatex() {
+    rerenderButton = document.getElementById("recompile");
+    rerenderButton.classList.add("spinner");
+
     const text = document.getElementById("editable-code").value;
     const formData = new FormData();
     formData.append("latex", text);
@@ -489,6 +492,9 @@ function recompileLatex() {
     })
     .catch(error => {
         console.error("Error:", error);
+    })
+    .finally(() => {
+        rerenderButton.classList.remove("spinner");
     });
 }
 
