@@ -152,3 +152,7 @@ LOGIN_URL = '/login/'
 
 LOGIN_REDIRECT_URL = '/documents'
 LOGOUT_REDIRECT_URL = '/login/'
+
+
+# CSRF settings
+CSRF_TRUSTED_ORIGINS = ['https://autotex.tech']
