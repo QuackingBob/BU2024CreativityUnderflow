@@ -1,5 +1,5 @@
 const canvas = document.getElementById("drawCanvas");
-const ctx = canvas ? canvas.getContext("2d") : null;
+const ctx = canvas.getContext("2d");
 const max_hist = 10;
 
 function resizeCanvas() {
@@ -78,18 +78,73 @@ function stopDrawing(e) {
     }
 }
 
+// Move getCookie function to global scope
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === name + "=") {
+                cookieValue = decodeURIComponent(
+                    cookie.substring(name.length + 1)
+                );
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 function saveState() {
     if (historyIndex >= max_hist - 1) {
         history.shift();
     }
     history.push(canvas.toDataURL());
     historyIndex = history.length - 1;
+
+    // Save to server
+    const documentId =
+        document.querySelector("[data-document-id]").dataset.documentId;
+    if (!documentId) {
+        console.error("No document ID found");
+        return;
+    }
+
+    const formData = new FormData();
+    fetch(canvas.toDataURL())
+        .then((res) => res.blob())
+        .then((blob) => {
+            formData.append("img_content", blob, "canvas_state.png");
+
+
+            return fetch(`/api/documents/${documentId}/update-state/`, {
+                method: "PATCH",
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken"),
+                },
+                body: formData,
+            });
+        })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.json();
+        })
+        .then((data) => {
+            console.log("State saved successfully:", data);
+        })
+        .catch((error) => {
+            console.error("Error saving state:", error);
+        });
 }
 
 function undo() {
     if (historyIndex > 0) {
         historyIndex--;
         restoreState(history[historyIndex]);
+        saveState();
     }
 }
 
@@ -97,6 +152,7 @@ function redo() {
     if (historyIndex < history.length - 1) {
         historyIndex++;
         restoreState(history[historyIndex]);
+        saveState();
     }
     // saveCanvasAsPNG();
 }
@@ -110,25 +166,6 @@ function saveCanvasAsPNG() {
     link.download = "drawing.png"; // Set filename
     link.href = dataURL;
 
-    // Get CSRF token from cookie
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== "") {
-            const cookies = document.cookie.split(";");
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === name + "=") {
-                    cookieValue = decodeURIComponent(
-                        cookie.substring(name.length + 1)
-                    );
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-    const csrftoken = getCookie("csrftoken");
-
     // Create form data and append the blob
     const formData = new FormData();
     fetch(dataURL)
@@ -140,37 +177,34 @@ function saveCanvasAsPNG() {
             fetch("/render", {
                 method: "POST",
                 headers: {
-                    "X-CSRFToken": csrftoken,
+                    "X-CSRFToken": getCookie("csrftoken"),
                 },
                 body: formData,
             })
-                .then(response => {
+                .then((response) => {
                     if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                        throw new Error("Network response was not ok");
                     }
                     return response.blob();
                 })
-                .then(blob => {
+                .then((blob) => {
                     // Create object URL from blob
                     const pdfUrl = URL.createObjectURL(blob);
-                    
+
                     // Update the PDF viewer
-                    const pdfViewer = document.querySelector('#main-render object');
+                    const pdfViewer = document.querySelector(
+                        "#main-render object"
+                    );
                     pdfViewer.data = pdfUrl;
-                    
-                    // Show the preview if not already visible
-                    document.getElementById('hidden-preview').style.display = 'block';
-                    document.getElementById('view-canvas').style.display = 'none';
-                    document.getElementById('main-toolbox').style.display = 'none';
-                    document.getElementById('hidden-tools').style.display = 'block';
-                    
+
+                    // Show the preview if not already visibl
+
                     // Update toggle state
-                    const toggle = document.getElementById('preview-toggle');
-                    toggle.classList.add('active');
-                    toggle.style.backgroundColor = '#c2a7ef';
+                    const toggle = document.getElementById("preview-toggle");
+                    toggleSwitch(toggle);
                 })
-                .catch(error => {
-                    console.error('Error:', error);
+                .catch((error) => {
+                    console.error("Error:", error);
                 });
         });
 
@@ -201,7 +235,9 @@ document.getElementById("eraserButton").addEventListener("click", function () {
     lineWidth = 30;
     toggleActive(this);
 });
-
+document.getElementById("backButton").addEventListener("click", function () {
+    window.location.href = "/documents/";
+});
 document.getElementById("undoButton").addEventListener("click", undo);
 document.getElementById("redoButton").addEventListener("click", redo);
 document
@@ -248,7 +284,10 @@ function toggleSource() {
     toggleViewable("main-source");
 
     main_elem = document.getElementById("main-render");
-    if (main_elem.classList.contains("split") && main_elem.classList.contains("right")) {
+    if (
+        main_elem.classList.contains("split") &&
+        main_elem.classList.contains("right")
+    ) {
         // If they are present, switch to "full"
         main_elem.classList.remove("split", "right");
         main_elem.classList.add("full");
@@ -261,13 +300,12 @@ function toggleSource() {
     button_elem = document.getElementById("split-view");
     if (button_elem.classList.contains("active")) {
         button_elem.classList.remove("active");
-    }
-    else {
+    } else {
         button_elem.classList.add("active");
     }
 }
 
-document.getElementById("split-view").addEventListener('click', toggleSource);
+document.getElementById("split-view").addEventListener("click", toggleSource);
 
 function toggleToolbarAnim(id) {
     elem = document.getElementById(id);
@@ -285,7 +323,6 @@ function toggleToolbarAnim(id) {
         elem.classList.add("hidden");
     }
 }
-
 
 function toggleSwitch(element) {
     element.classList.toggle("active");
@@ -329,82 +366,122 @@ document.body.addEventListener(
 // Save initial state
 saveState();
 
-    img_content = models.ImageField(upload_to='documents/images/', blank=True, null=True)
+function update(input) {
+    // Use Prism to highlight the input value as LaTeX code
+    const highlightedCode = Prism.highlight(
+        input,
+        Prism.languages.latex,
+        "latex"
+    );
+    document.getElementById("highlighted-code").innerHTML = highlightedCode;
+}
 
+// Sync scrolling between editable and highlighted areas
+function sync_scroll(element) {
+    const highlightedCode = document.getElementById("highlighted-code");
+    highlightedCode.scrollTop = element.scrollTop;
+    highlightedCode.scrollLeft = element.scrollLeft;
+}
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const saveButton = document.getElementById('saveButton');
-        const documentForm = document.querySelector('.container');
-    
-        saveButton.addEventListener('click', async function(e) {
-            e.preventDefault();
-    
-            const title = document.getElementById('documentTitle').value;
-            const content = document.getElementById('editable-code').value;
-    
-            const canvas = document.getElementById("drawCanvas");
-            let imgBlob = null;
-    
-            if (canvas) {
-                imgBlob = await new Promise((resolve) => {
-                    canvas.toBlob(resolve, 'image/png');
-                });
-            }
-    
-            const formData = new FormData();
-            formData.append('title', title);
-            formData.append('content', content);
-            if (imgBlob) {
-                formData.append('img_content', imgBlob, 'drawing.png');
-            }
-    
-            {% if document %}
-                const documentId = '{{ document.id }}';
-                var url = `/api/documents/${documentId}/`;
-                var method = 'PUT';
-            {% else %}
-                var url = `/api/documents/`;
-                var method = 'POST';
-            {% endif %}
-    
-            // Get CSRF token
-            function getCookie(name) {
-                let cookieValue = null;
-                if (document.cookie && document.cookie !== "") {
-                    const cookies = document.cookie.split(";");
-                    for (let i = 0; i < cookies.length; i++) {
-                        const cookie = cookies[i].trim();
-                        if (cookie.substring(0, name.length + 1) === (name + "=")) {
-                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                            break;
-                        }
-                    }
+// Tab key handling
+function check_tab(element, event) {
+    if (event.key === 'Tab') {
+        event.preventDefault();
+        const start = element.selectionStart;
+        const end = element.selectionEnd;
+        // Insert tab character
+        element.value = element.value.substring(0, start) + "\t" + element.value.substring(end);
+        // Move the cursor after the tab
+        element.selectionStart = element.selectionEnd = start + 1;
+        // Update the highlighted code
+        update(element.value);
+    }
+}
+
+function recompile() {
+    // Get the LaTeX content from the textarea
+    const text = document.getElementById("editable-code").value; // Use .value to get the text
+
+    // Get CSRF token from cookie
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            const cookies = document.cookie.split(";");
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === name + "=") {
+                    cookieValue = decodeURIComponent(
+                        cookie.substring(name.length + 1)
+                    );
+                    break;
                 }
-                return cookieValue;
             }
-            const csrftoken = getCookie('csrftoken');
-    
-            try {
-                const response = await fetch(url, {
-                    method: method,
-                    headers: {
-                        'X-CSRFToken': csrftoken,
-                    },
-                    body: formData
-                });
-                const data = await response.json();
-                if (response.ok) {
-                    alert('Document saved successfully!');
-                    if (!{{ document|yesno:"true,false" }}) {
-                        window.location.href = `/documents/${data.id}/`;
-                    }
-                } else {
-                    alert('Error saving document');
-                    console.error(data.errors);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error saving document');
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie("csrftoken");
+
+    // Create form data and append the LaTeX content
+    const formData = new FormData();
+    formData.append("latex", text); // Append the LaTeX content to form data
+
+    // Send the LaTeX content to the server
+    fetch("/recompile_latex", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrftoken,
+        },
+        body: formData,
+    })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
             }
+            return response.blob(); // Expect a blob response (PDF)
+        })
+        .then((blob) => {
+            // Create an object URL from the blob
+            const pdfUrl = URL.createObjectURL(blob);
+
+            // Update the PDF viewer
+            const pdfViewer = document.querySelector("#main-render object");
+            pdfViewer.data = pdfUrl;
+
+            toggleSwitch(document.getElementById("preview-toggle"));
+        })
+        .catch((error) => {
+            console.error("Error:", error);
         });
-    });
+}
+
+document.getElementById("recompile").addEventListener('click', recompile);
+
+// Add this function to restore state from server
+async function loadInitialState() {
+    const documentId =
+        document.querySelector("[data-document-id]").dataset.documentId;
+    if (!documentId) return;
+
+    try {
+        const response = await fetch(`/api/documents/${documentId}/`);
+        const document = await response.json();
+
+        if (document.img_content) {
+            const img = new Image();
+            img.src = document.img_content;
+            img.onload = function () {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+                saveState(); // Save initial state to history
+            };
+        } else {
+            saveState(); // Save blank state to history
+        }
+    } catch (error) {
+        console.error("Error loading initial state:", error);
+        saveState(); // Save blank state to history if loading fails
+    }
+}
+
+// Call loadInitialState when the page loads
+loadInitialState();

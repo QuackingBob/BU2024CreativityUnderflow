@@ -1,85 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-        {% load static %}
-        <title>Document Form</title>
-        <link
-            rel="stylesheet"
-            href="{% static 'css/form.css' %}" />
 
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" />
-    </head>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    {% load static %}
+    <title>Website Layout</title>
+    <link rel="stylesheet" href="{% static 'css/form.css' %}" />
 
-    <body>
-        <div class="container">
-            <div class="top-bar">
-                <div class="icon">
-                    <a href="/">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" />
+
+    <link rel="stylesheet" href="{% static 'css/prism.css' %}">
+</head>
+
+<body>
+    <div class="container" data-document-id="{{ document.id }}">
+        <div class="top-bar">
+            <div class="icon">
+                <a href="/">
                     <button class="button" id="backButton">
-                        <img src="{% static 'icons\back-arrow-direction-down-right-left-up-2-svgrepo-com.svg' %}" style="height: 1" />
+                        <img src="{% static 'icons\back-arrow-direction-down-right-left-up-2-svgrepo-com.svg' %}"
+                            style="height: 1" />
+                    </button>
+                </a>
+            </div>
+            <div class="toolbar">
+                <div class="visible" id="main-toolbox">
+                    <button class="button" id="penButton">
+                        <img src="{% static 'icons\pen-line-svgrepo-com.svg' %}" style="height: 1" />
+                    </button>
+                    <button class="button" id="eraserButton">
+                        <img src="{% static 'icons\eraser-svgrepo-com.svg' %}" style="height: 1" />
+                    </button>
+                    <button class="button" id="undoButton">
+                        <img src="{% static 'icons\undo-left-round-svgrepo-com.svg' %}" style="height: 1" />
+                    </button>
+                    <button class="button" id="redoButton">
+                        <img src="{% static 'icons\undo-right-round-svgrepo-com.svg' %}" style="height: 1" />
+                    </button>
+                    <button class="button" id="downloadButton">
+                        <img src="{% static 'icons\download-minimalistic-svgrepo-com.svg' %}" style="height: 1" />
                     </button>
                     </a>
                 </div>
-                <div class="toolbar">
-                    <div class="visible" id="main-toolbox">
-                        <button class="button" id="penButton">
-                            <img src="{% static 'icons\pen-line-svgrepo-com.svg' %}" style="height: 1" />
-                        </button>
-                        <button class="button" id="eraserButton">
-                            <img src="{% static 'icons\eraser-svgrepo-com.svg' %}" style="height: 1" />
-                        </button>
-                        <button class="button" id="undoButton">
-                            <img src="{% static 'icons\undo-left-round-svgrepo-com.svg' %}" style="height: 1" />
-                        </button>
-                        <button class="button" id="redoButton">
-                            <img src="{% static 'icons\undo-right-round-svgrepo-com.svg' %}" style="height: 1" />
-                        </button>
-                        <button class="button" id="downloadButton">
-                            <img src="{% static 'icons\download-minimalistic-svgrepo-com.svg' %}" style="height: 1" />
-                        </button>
+                <div class="hidden" id="hidden-tools">
+                    <div class="button" id="recompile">
+                        <img src="{% static 'icons\refresh-circle-svgrepo-com (2).svg' %}" style="height: 1" />
                     </div>
-                    <div class="hidden" id="hidden-tools">
-                        <div class="button" id="split-view">
-                            <img src="{% static 'icons/split-two-svgrepo-com.svg' %}" style="height: 1" />
-                        </div>
+                    <div class="button" id="split-view">
+                        <img src="{% static 'icons/split-two-svgrepo-com.svg' %}" style="height: 1" />
                     </div>
-                    
-        <!-- Add save button -->
-        <button class="button" id="saveButton">
-            <img src="{% static 'icons/save.svg' %}" style="height: 1" />
-        </button>
-        
-        <!-- Add title input -->
-        <input type="text" id="documentTitle" placeholder="Document Title" 
-        value="{{ document.title|default:'Untitled' }}" />
-</div>            </div>
+                </div>
+            </div>
 
-            <div
-                class="toggle"
-                onclick="toggleSwitch(this)"
-                id="preview-toggle"
-                style="background-color: #ffffff">
+            <div class="toggle" onclick="toggleSwitch(this)" id="preview-toggle" style="background-color: #ffffff">
                 <div class="circle"></div>
             </div>
-            
-            <div
-                class="render-preview"
-                id="hidden-preview"
-                style="display: none">
-                <div
-                id="main-render"
-                class="full">
-                <object
-                    data="{% static 'test/Homework 7.pdf' %}"
-                    type="application/pdf"
-                    width="100%"
-                    height="100%">
+        </div>
+
+
+        <div class="render-preview" id="hidden-preview" style="display: none">
+            <div id="main-render" class="full">
+                <object data="{% static 'test/Homework 7.pdf' %}" type="application/pdf" width="100%" height="100%">
                     <p>
                         Unable to display PDF file.
                         <a href="">Download</a> instead.
@@ -87,30 +69,25 @@
                 </object>
             </div>
 
-            <div
-                id="main-source"
-                style="display: none"
-                class="split left">
+            <div id="main-source" style="display: none" class="split left">
                 <div id="code-editor">
-                    <textarea
-                        id="editable-code"
-                        placeholder="Type your code or LaTeX here..."></textarea>
+                    <textarea id="editable-code" placeholder="Type your code or LaTeX here..."
+                        oninput="update(this.value); sync_scroll(this);" onscroll="sync_scroll(this);"
+                        onkeydown="check_tab(this, event);"></textarea>
                     <pre><code id="highlighted-code" class="language-latex"></code></pre>
                 </div>
-            </div>            </div>
-            <div
-                class="canvas"
-                id="view-canvas">
-                {% if document.img_content %}
-                <img src="{{ document.img_content.url }}" alt="Saved Image" id="savedImage" style="width: 100%; height: 100%;" />
-                {% else %}
-                <canvas id="drawCanvas"></canvas>
-                {% endif %}
             </div>
         </div>
 
-        <script src="{% static 'js/form.js' %}"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-latex.min.js"></script>
-    </body>
+        <div class="canvas" id="view-canvas">
+            <canvas id="drawCanvas"></canvas>
+        </div>
+    </div>
+
+    <script src="{% static 'js/form.js' %}"></script>
+    <!-- <script src="{% static 'js/prism.js' %}"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-latex.min.js"></script>
+</body>
+
 </html>
