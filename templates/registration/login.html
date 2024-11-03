@@ -9,6 +9,24 @@
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <style>
+      .btn-glow {
+        background-color: #8a65c9 !important;
+        border: none !important;
+        transition: all 0.3s ease !important;
+      }
+
+      .btn-glow:hover {
+        background-color: #6f42c1 !important;
+        box-shadow: 0 0 20px rgba(138, 101, 201, 0.6) !important;
+        transform: translateY(-2px) !important;
+      }
+
+      .btn-glow:active {
+        transform: translateY(0) !important;
+      }
+    </style>
   </head>
   <body style="background-color: #8a65c9;">
     <section class="ftco-section">
@@ -87,7 +105,7 @@
                   </div>
 
                   <div class="form-group">
-                    <button type="submit" class="form-control btn btn-primary rounded submit px-3">Sign In</button>
+                    <button type="submit" class="form-control btn btn-glow rounded submit px-3">Sign In</button>
                   </div>
 
                   <div class="form-group d-md-flex">
