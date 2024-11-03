@@ -38,6 +38,3 @@ class CustomLoginView(LoginView):
         return super().form_valid(form)
     
  
-
-def landing(request):
-    return render(request, 'frontend/landing.html')
