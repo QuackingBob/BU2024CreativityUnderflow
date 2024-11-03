@@ -1,29 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-        {% load static %}
-        <title>Website Layout</title>
-        <link
-            rel="stylesheet"
-            href="{% static 'css/form.css' %}" />
 
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" />
-    </head>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    {% load static %}
+    <title>Website Layout</title>
+    <link rel="stylesheet" href="{% static 'css/form.css' %}" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" />
+
+    <link rel="stylesheet" href="{% static 'css/prism.css' %}">
+</head>
 
 <body>
     <div class="container">
         <div class="top-bar">
             <div class="icon">
                 <a href="/documents/">
-                <button class="button" id="backButton">
-                    <img src="{% static 'icons\back-arrow-direction-down-right-left-up-2-svgrepo-com.svg' %}" style="height: 1" />
-                </button>
+                    <button class="button" id="backButton">
+                        <img src="{% static 'icons\back-arrow-direction-down-right-left-up-2-svgrepo-com.svg' %}"
+                            style="height: 1" />
+                    </button>
                 </a>
             </div>
             <div class="toolbar">
@@ -45,50 +43,36 @@
                     </button>
                 </div>
                 <div class="hidden" id="hidden-tools">
+                    <div class="button" id="recompile">
+                        <img src="{% static 'icons\refresh-circle-svgrepo-com (2).svg' %}" style="height: 1" />
+                    </div>
                     <div class="button" id="split-view">
                         <img src="{% static 'icons/split-two-svgrepo-com.svg' %}" style="height: 1" />
                     </div>
                 </div>
             </div>
 
-                <div
-                    class="toggle"
-                    onclick="toggleSwitch(this)"
-                    id="preview-toggle"
-                    style="background-color: #ffffff">
-                    <div class="circle"></div>
-                </div>
+            <div class="toggle" onclick="toggleSwitch(this)" id="preview-toggle" style="background-color: #ffffff">
+                <div class="circle"></div>
             </div>
-            <div
-                class="render-preview"
-                id="hidden-preview"
-                style="display: none">
-                <div
-                    id="main-render"
-                    class="full">
-                    <object
-                        data="{% static 'test/Homework 7.pdf' %}"
-                        type="application/pdf"
-                        width="100%"
-                        height="100%">
-                        <p>
-                            Unable to display PDF file.
-                            <a href="">Download</a> instead.
-                        </p>
-                    </object>
-                </div>
+        </div>
+        <div class="render-preview" id="hidden-preview" style="display: none">
+            <div id="main-render" class="full">
+                <object data="{% static 'test/Homework 7.pdf' %}" type="application/pdf" width="100%" height="100%">
+                    <p>
+                        Unable to display PDF file.
+                        <a href="">Download</a> instead.
+                    </p>
+                </object>
+            </div>
 
-                <div
-                    id="main-source"
-                    style="display: none"
-                    class="split left">
-                    <div id="code-editor">
-                        <textarea
-                            id="editable-code"
-                            placeholder="Type your code or LaTeX here..."></textarea>
-                        <pre><code id="highlighted-code" class="language-latex"></code></pre>
-                    </div>
-                </div>
+            <div id="main-source" style="display: none" class="split left">
+                <div id="code-editor">
+                    <textarea id="editable-code" placeholder="Type your code or LaTeX here..."
+                        oninput="update(this.value); sync_scroll(this);" onscroll="sync_scroll(this);"
+                        onkeydown="check_tab(this, event);"></textarea>
+                    <pre><code id="highlighted-code" class="language-latex"></code></pre>
+                </div>        
 
                 <!-- Add MathJax for LaTeX rendering -->
                 <!-- <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>             -->
@@ -101,6 +85,7 @@
         </div>
 
         <script src="{% static 'js/form.js' %}"></script>
+        <!-- <script src="{% static 'js/prism.js' %}"></script> -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-latex.min.js"></script>
     </body>

@@ -23,5 +23,5 @@ urlpatterns = [
     path("list", views.document_list),
     path("render", views.render_image),
     path('get_latex', views.get_latex, name='get_latex'),
-
+    path('recompile_latex', views.get_latex, name='recompile_latex'),
 ]

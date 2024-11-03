@@ -68,6 +68,34 @@ def get_latex(request):
     except FileNotFoundError:
         return HttpResponse(status=404)
     
+def recompile_latex(request):
+    if request.method == 'POST':
+        latex = request.POST['latex']
+        with open('static/output.tex', 'w') as f:
+            f.write(latex)
+
+        try:
+            subprocess.run(
+                ['pdflatex', '-output-directory=static', 'static/output.tex'],
+                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE
+            )
+            pdf_path = 'static/output.pdf'
+            
+            # Check if the PDF was created successfully
+            if os.path.exists(pdf_path):
+                return FileResponse(open(pdf_path, 'rb'), content_type='application/pdf')
+            else:
+                return HttpResponse("PDF compilation failed.", status=500)
+        
+        except subprocess.CalledProcessError as e:
+            # Log the error or return an error response
+            return HttpResponse(f"Compilation error: {e.stderr.decode()}", status=500)
+    
+    return HttpResponse("Invalid request method.", status=405)
+
+    
 def create_document(request):
     if request.method == 'POST':
         title = request.POST['title']

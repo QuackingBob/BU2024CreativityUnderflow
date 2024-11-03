@@ -208,51 +208,96 @@ canvas {
     /* max-height: 500px;
     opacity: 1; */
     overflow: hidden;
-    max-height: 200px; /* Adjust to fit the content height */
+    max-height: 200px;
+    /* Adjust to fit the content height */
     opacity: 1;
     transition: max-height 0.5s ease, opacity 0.5s ease;
 }
 
+#hidden-tools {
+    display: flex; /* Change display to flex */
+    flex-direction: row; /* Align items in a row */
+    gap: 5px;
+}
+
 #code-editor {
     position: relative;
-    /* border-radius: 8px; */
     overflow: hidden;
-    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); */
     width: 100%;
-    height: 100%;
-    background-color: #2d2d2d; /* Dark background */
+    height: 100vh;
+    background-color: #2d2d2d;
 }
 
 #editable-code {
     width: 100%;
-    height: 100%;
-    padding: 1em;
+    height: 85vh;
+    padding: 1em; /* Match padding with highlighted-code */
     font-family: monospace;
     font-size: 1em;
     border: none;
     outline: none;
     resize: none;
     background: transparent;
-    color: transparent; /* Hide text */
-    caret-color: #dcdcdc; /* Keep cursor visible */
+    color: transparent; /* Make text transparent */
+    caret-color: #dcdcdc; /* Visible caret */
     z-index: 1;
     position: relative;
-    white-space: pre;
+    white-space: pre-wrap;
     overflow-wrap: normal;
     overflow-y: auto;
+    line-height: 1.5; /* Set line-height */
+    box-sizing: border-box; /* Ensure consistent box-sizing */
+    /* Ensure scrollbar appears */
+    scrollbar-width: thin; /* For Firefox */
+    scrollbar-color: #444 #2d2d2d; /* For Firefox */
 }
 
 #highlighted-code {
+    width: 100%;
+    height: 85vh;
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    padding: 1em;
+    padding: 1em; /* Match padding with editable-code */
     pointer-events: none;
     white-space: pre-wrap;
     font-family: monospace;
-    color: #dcdcdc; /* Light text color */
+    font-size: 1em;
+    color: #dcdcdc;
     overflow-wrap: break-word;
     z-index: 0;
+    overflow-y: auto; /* Enable scroll */
+    line-height: 1.5; /* Set line-height */
+    box-sizing: border-box; /* Ensure consistent box-sizing */
+    /* Ensure scrollbar appears */
+    scrollbar-width: thin; /* For Firefox */
+    scrollbar-color: #444 #2d2d2d; /* For Firefox */
+    text-shadow: none;
+}
+
+/* Custom scrollbar for WebKit browsers (Chrome, Safari) */
+#editable-code::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+}
+
+#editable-code::-webkit-scrollbar-track {
+    background: #2d2d2d; /* Background of the scrollbar track */
+}
+
+#editable-code::-webkit-scrollbar-thumb {
+    background-color: #444; /* Color of the scrollbar handle */
+    border-radius: 10px; /* Rounded corners */
+}
+
+#highlighted-code::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+}
+
+#highlighted-code::-webkit-scrollbar-track {
+    background: #2d2d2d; /* Background of the scrollbar track */
+}
+
+#highlighted-code::-webkit-scrollbar-thumb {
+    background-color: #444; /* Color of the scrollbar handle */
+    border-radius: 10px; /* Rounded corners */
 }

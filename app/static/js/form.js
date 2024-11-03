@@ -153,17 +153,17 @@ function saveCanvasAsPNG() {
                 .then(blob => {
                     // Create object URL from blob
                     const pdfUrl = URL.createObjectURL(blob);
-                    
+
                     // Update the PDF viewer
                     const pdfViewer = document.querySelector('#main-render object');
                     pdfViewer.data = pdfUrl;
-                    
+
                     // Show the preview if not already visible
                     document.getElementById('hidden-preview').style.display = 'block';
                     document.getElementById('view-canvas').style.display = 'none';
                     document.getElementById('main-toolbox').style.display = 'none';
                     document.getElementById('hidden-tools').style.display = 'block';
-                    
+
                     // Update toggle state
                     const toggle = document.getElementById('preview-toggle');
                     toggle.classList.add('active');
@@ -328,4 +328,97 @@ document.body.addEventListener(
 
 // Save initial state
 saveState();
+
+function update(input) {
+    // Use Prism to highlight the input value as LaTeX code
+    const highlightedCode = Prism.highlight(input, Prism.languages.latex, 'latex');
+    document.getElementById("highlighted-code").innerHTML = highlightedCode;
+}
+
+// Sync scrolling between editable and highlighted areas
+function sync_scroll(element) {
+    const highlightedCode = document.getElementById("highlighted-code");
+    highlightedCode.scrollTop = element.scrollTop;
+    highlightedCode.scrollLeft = element.scrollLeft;
+}
+
+// Tab key handling
+function check_tab(element, event) {
+    if (event.key === 'Tab') {
+        event.preventDefault();
+        const start = element.selectionStart;
+        const end = element.selectionEnd;
+        // Insert tab character
+        element.value = element.value.substring(0, start) + "\t" + element.value.substring(end);
+        // Move the cursor after the tab
+        element.selectionStart = element.selectionEnd = start + 1;
+        // Update the highlighted code
+        update(element.value);
+    }
+}
+
+function recompile() {
+    // Get the LaTeX content from the textarea
+    const text = document.getElementById("editable-code").value; // Use .value to get the text
+
+    // Get CSRF token from cookie
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            const cookies = document.cookie.split(";");
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === name + "=") {
+                    cookieValue = decodeURIComponent(
+                        cookie.substring(name.length + 1)
+                    );
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie("csrftoken");
+
+    // Create form data and append the LaTeX content
+    const formData = new FormData();
+    formData.append("latex", text); // Append the LaTeX content to form data
+
+    // Send the LaTeX content to the server
+    fetch("/recompile_latex", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrftoken,
+        },
+        body: formData,
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.blob(); // Expect a blob response (PDF)
+        })
+        .then(blob => {
+            // Create an object URL from the blob
+            const pdfUrl = URL.createObjectURL(blob);
+
+            // Update the PDF viewer
+            const pdfViewer = document.querySelector('#main-render object');
+            pdfViewer.data = pdfUrl;
+
+            // Show the preview if not already visible
+            document.getElementById('hidden-preview').style.display = 'block';
+            document.getElementById('view-canvas').style.display = 'none';
+            document.getElementById('main-toolbox').style.display = 'none';
+            document.getElementById('hidden-tools').style.display = 'block';
+
+            // Update toggle state
+            const toggle = document.getElementById('preview-toggle');
+            toggle.classList.add('active');
+            toggle.style.backgroundColor = '#c2a7ef';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
 
