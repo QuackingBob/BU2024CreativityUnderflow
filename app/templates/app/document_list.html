@@ -5,7 +5,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Replicated Layout</title>
+    
     <style>
+      .btn-glow {
+        background-color: #c2a7ef !important;
+        border: none !important;
+        transition: all 0.3s ease !important;
+      }
+
+      .btn-glow:hover {
+        background-color: #8a65c9 !important;
+        box-shadow: 0 0 20px #8a65c9 !important;
+        transform: translateY(-2px) !important;
+      }
+
+      .btn-glow:active {
+        transform: translateY(0) !important;
+      }
+    
         /* General reset */
         * {
             margin: 0;
@@ -29,7 +46,7 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
-            align-items: start;
+            position: relative;
         }
 
         .sidebar input[type="text"] {
@@ -41,11 +58,34 @@
             background-color: #f5f5f5;
         }
 
-        .sidebar a {
-            margin: 10px 0;
+        /* Updated Notes link styling */
+        .notes-link {
+           /* background-color: #c2a7ef;  Light purple background */
+            padding: 10px 15px;
+            border-radius: 15px;
+            margin: 5px 0;
+            width: 100%;
+            display: block;
+        }
+
+        .notes-link a {
+            margin: 0;
             font-size: 18px;
             color: black;
             text-decoration: none;
+            display: block;
+        }
+
+        /* Logout container styling */
+        .logout-container {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            padding: 0 20px;
         }
 
         /* Main content area */
@@ -108,71 +148,93 @@
             border-radius: 5px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
         }
+
+        /* Styling for the Logout button */
+        .sidebar button {
+            background-color: #7b5bbf;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar button:hover {
+            background-color: #6d43c1;
+        }
+
+        .sidebar button:active {
+            background-color: #5736a0;
+        }
     </style>
 </head>
 
 <body>
-    <form action="{% url 'logout' %}" method="post" style="display:inline;">
-        <div class="container">
-            <!-- Sidebar -->
-            <div class="sidebar">
-                <input type="text" placeholder="Search..." />
-                <a href="#">Notes</a>
-                <a href="#">Rendered</a>
- 
-                {% csrf_token %}
-                <button type="submit">Logout</button> 
-             </div>
-
-                    <!-- Main content area -->
-                    <div class="main-content">
-                        <h2>Subject</h2>
-                        <div class="card-grid">
-                            <!-- Cards -->
-                            <div class="card">
-                                <div class="badge"></div>
-                                <div class="card-footer">
-                                    <p><strong>Name</strong></p>
-                                    <p>November 1, 2024</p>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="badge"></div>
-                                <div class="card-footer">
-                                    <p><strong>Name</strong></p>
-                                    <p>November 1, 2024</p>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="badge"></div>
-                                <div class="card-footer">
-                                    <p><strong>Name</strong></p>
-                                    <p>November 1, 2024</p>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="badge"></div>
-                                <div class="card-footer">
-                                    <p><strong>Name</strong></p>
-                                    <p>November 1, 2024</p>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="badge"></div>
-                                <div class="card-footer">
-                                    <p><strong>Name</strong></p>
-                                    <p>November 1, 2024</p>
-                                </div>
-                            </div>
-                            <!-- Add more cards as needed -->
-                        </div>
-                    </div>
-
-                    <!-- Floating button -->
-                    <div class="floating-button"></div>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <input type="text" placeholder="Search..." />
+            <div class="notes-link">
+                <b>Notes</b>
+            </div>
+            
+            <!-- Logout button in container -->
+            <div class="logout-container">
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit">Logout</button>
+                </form>
             </div>
         </div>
-    </form>
+
+        <!-- Main content area -->
+        <div class="main-content">
+            <h2>Welcome, {{ user.username }}!</h2>
+            <div class="card-grid">
+                <!-- Cards -->
+                <div class="card">
+                    <div class="badge"></div>
+                    <div class="card-footer">
+                        <p><strong>Name</strong></p>
+                        <p>November 1, 2024</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="badge"></div>
+                    <div class="card-footer">
+                        <p><strong>Name</strong></p>
+                        <p>November 1, 2024</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="badge"></div>
+                    <div class="card-footer">
+                        <p><strong>Name</strong></p>
+                        <p>November 1, 2024</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="badge"></div>
+                    <div class="card-footer">
+                        <p><strong>Name</strong></p>
+                        <p>November 1, 2024</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="badge"></div>
+                    <div class="card-footer">
+                        <p><strong>Name</strong></p>
+                        <p>November 1, 2024</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating button -->
+        <div class="floating-button"></div>
+    </div>
 </body>
 
 </html>

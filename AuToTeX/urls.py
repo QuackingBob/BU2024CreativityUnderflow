@@ -18,13 +18,14 @@ from django.urls import include, path
 import documents.views as docviews 
 import app.views as appviews
 from django.contrib.auth.views import LogoutView
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('documents/', appviews.document_list, name='documents'),  # Ensure this line exists
     path('login/', docviews.CustomLoginView.as_view(), name='login'),  # Adjust according to your project
     path('signup/', docviews.signup, name='signup'),
-    path('logout/', LogoutView.as_view(next_page='login'), name='logout'), 
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('home/', docviews.home)
 ]
 
@@ -32,4 +33,5 @@ urlpatterns = [
 urlpatterns += [
     path('', include('app.urls')),
 ]
+
 
