@@ -14,7 +14,7 @@ window.addEventListener("resize", resizeCanvas);
 let isDrawing = false;
 let lastX = 0;
 let lastY = 0;
-let drawingColor = "#c2a7ef";
+let drawingColor = "#8a65c9"; // "#c2a7ef";
 let lineWidth = 2;
 let history = [];
 let historyIndex = -1;
