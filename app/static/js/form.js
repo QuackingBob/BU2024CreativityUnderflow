@@ -115,7 +115,7 @@ function saveState() {
         .then(res => res.blob())
         .then(blob => {
             formData.append("img_content", blob, "canvas_state.png");
-            
+
             return fetch(`/api/documents/${documentId}/update-state/`, {
                 method: 'PATCH',
                 headers: {
@@ -372,8 +372,27 @@ function update(input) {
     document.getElementById("highlighted-code").innerHTML = highlightedCode;
 }
 
+// Sync scrolling between editable and highlighted areas
+function sync_scroll(element) {
+    const highlightedCode = document.getElementById("highlighted-code");
+    highlightedCode.scrollTop = element.scrollTop;
+    highlightedCode.scrollLeft = element.scrollLeft;
+}
 
-
+// Tab key handling
+function check_tab(element, event) {
+    if (event.key === 'Tab') {
+        event.preventDefault();
+        const start = element.selectionStart;
+        const end = element.selectionEnd;
+        // Insert tab character
+        element.value = element.value.substring(0, start) + "\t" + element.value.substring(end);
+        // Move the cursor after the tab
+        element.selectionStart = element.selectionEnd = start + 1;
+        // Update the highlighted code
+        update(element.value);
+    }
+}
 
 function recompile() {
     // Get the LaTeX content from the textarea
@@ -440,29 +459,7 @@ function recompile() {
         });
 }
 
-// Sync scrolling between editable and highlighted areas
-function sync_scroll(element) {
-    const highlightedCode = document.getElementById("highlighted-code");
-    highlightedCode.scrollTop = element.scrollTop;
-    highlightedCode.scrollLeft = element.scrollLeft;
-}
-
-// Tab key handling
-function check_tab(element, event) {
-    if (event.key === 'Tab') {
-        event.preventDefault();
-        const start = element.selectionStart;
-        const end = element.selectionEnd;
-        // Insert tab character
-        element.value = element.value.substring(0, start) + "\t" + element.value.substring(end);
-        // Move the cursor after the tab
-        element.selectionStart = element.selectionEnd = start + 1;
-        // Update the highlighted code
-        update(element.value);
-    }
-}
-
-
+document.getElementById("recompile").addEventListener('click', recompile);
 
 // Add this function to restore state from server
 async function loadInitialState() {
@@ -472,11 +469,11 @@ async function loadInitialState() {
     try {
         const response = await fetch(`/api/documents/${documentId}/`);
         const document = await response.json();
-        
+
         if (document.img_content) {
             const img = new Image();
             img.src = document.img_content;
-            img.onload = function() {
+            img.onload = function () {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.drawImage(img, 0, 0);
                 saveState(); // Save initial state to history

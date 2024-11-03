@@ -24,7 +24,7 @@ router.register(r'documents', views.DocumentViewSet)
 urlpatterns = [
     path("render", views.render_image),
     path('get_latex', views.get_latex, name='get_latex'),
-    path('recompile_latex', views.get_latex, name='recompile_latex'),
+    path('recompile_latex', views.recompile_latex, name='recompile_latex'),
     path('api/', include(router.urls)), 
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
